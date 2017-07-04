@@ -1,11 +1,5 @@
-# farmos-nws
+# farmosnws
 Automated importing of National Weather Service (NWS) data into FarmOS.
-
-For more information about FarmOS, please visit the 
-[FarmOS](http://www.farmos.org) website.
-
-For more information about the National Weather Service (NWS), please visit the 
-[NWS](http://www.weather.gov) website.
 
 ## Purpose
 The purpose of this project is to allow FarmOS to use data from the National
@@ -25,7 +19,13 @@ investment.
 * PHP
 * Crontab or other task scheduler capable of running shell scripts
 
-## Setup 
+## Setup
+
+### Clone the Repository
+Clone this repository by running the command below
+```
+git clone https://github.com/bitsecondal/farmosnws.git
+```
 
 ### Create Configuration File
 Make a copy of the get_weather_config_ex.sh file. Update the variables located in the configuration
@@ -53,7 +53,9 @@ steps below. The National Weather Service updates the data hourly.
 #### Linux/Ubuntu with Crontab
 Update the paths mentioned to the location of your script and the location of your configuration 
 file respectively. If you want to log the output of the script, also update the log location. 
+```shell
 24 * * * * (/path/to/drupal/sites/all/modules/farmosnws/get_weather.sh /path/to/drupal/sites/all/modules/farmosnws/config.sh) >> /var/log/get_weather.log 2>&1
+```
 
 #### Windows with Task Scheduler
 You will need to install software that is capable of downloading files in Windows. Powershell 
@@ -63,8 +65,13 @@ for the command to run, enter the path to the script in your Drupal directory an
 file as an argument in the script.
 
 ## Code Updates 
-To get the latest version of the code, pull the latest release from the 
-[FarmOS NWS GitHub Page](https://github.com/bitsecondal/farmosnws/issues). 
+To get the latest version of this code, pull the latest release from the 
+[FarmOS NWS GitHub Page](https://github.com/bitsecondal/farmosnws). 
+
+Alternatively you can get the latest code by going to the directory that contains the code and running the command below:
+```
+git pull origin master
+```
  
 ## Author
 Kenny Robinson, Bit Second Tech (www.bitsecondtech.com)
@@ -78,3 +85,9 @@ as much detail as possible so that the issue can be replicated.
 
 ## License 
 Project is available under the MIT License. See LICENSE for more information.
+
+## Additional Information
+For more information about FarmOS, please visit the [FarmOS](http://www.farmos.org) website.
+
+For more information about the National Weather Service (NWS), please visit the 
+[NWS](http://www.weather.gov) website.
