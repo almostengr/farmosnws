@@ -23,7 +23,7 @@ investment.
 
 ### Clone the Repository
 Clone this repository by running the command below
-```
+```shell
 git clone https://github.com/bitsecondal/farmosnws.git
 ```
 
@@ -69,7 +69,7 @@ To get the latest version of this code, pull the latest release from the
 [FarmOS NWS GitHub Page](https://github.com/bitsecondal/farmosnws). 
 
 Alternatively you can get the latest code by going to the directory that contains the code and running the command below:
-```
+```shell
 git pull origin master
 ```
  
