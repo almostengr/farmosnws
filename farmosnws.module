@@ -31,9 +31,7 @@ function farmosnws_cron() {
  * get the weather data from the NWS
  */
 function farmosnws_get_xml() {
-  // http://w1.weather.gov/xml/current_obs/${location}.xml
- 
-  $weatherfeedsdir = variable_get('farmosnws_weather_feeds_dir', 'public://');
+  $weatherfeedsdir = variable_get('farmosnws_weather_feeds_dir');
   
   $locations = variable_get('farmosnws_locations', '');
   $location_array = explode("\n", $locations);
@@ -44,6 +42,8 @@ function farmosnws_get_xml() {
     $weather_feed_name = $weather_feed_dir . '/' . $uniqid($loc, FALSE) . '.xml';
     $url = "http://w1.weather.gov/xml/current_obs/" . $loc . ".xml"
 
+    watchdog('farmosnws', 'Getting weather data for ' . $loc, array(), WATCHDOG_INFO, NULL);
+
     $response = drupal_http_request($url, array());
 
     watchdog('farmosnws', 'Response code: ' . $response->code, array(), WATCHDOG_INFO, NULL);
@@ -53,6 +53,7 @@ function farmosnws_get_xml() {
       watchdog('farmosnws', $response->error, array(), WATCHDOG_ERROR, NULL);
       drupal_set_message($response->error, 'error', FALSE);
     }
+    // if no errors occur when performing the request
     else{
       // if the directory doesnt exist, then create it
       if ( is_dir($weatherfeedsdir) == FALSE ) {
@@ -62,6 +63,7 @@ function farmosnws_get_xml() {
 
       // save the contents retrieved
       file_put_contents($weather_feed_name, $response->data);
+      watchdog('farmosnws', 'Weather data saved to ' . $weather_feed_name, array(), WATCHDOG_INFO, NULL);
     }
   } // end foreach
 } // end function
