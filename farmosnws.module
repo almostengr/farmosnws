@@ -1,0 +1,82 @@
+<?php
+
+/**
+ * 
+ * Implements hook_menu()
+ */
+function farmosnws_menu() {
+  $items = array();
+
+  $items['admin/config/farmosnws'] = array(
+    'title' => t('FarmOS NWS Settings'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => 'farmosnws_admin_form',
+    'access arguments' => 'administer users',
+    'type' => MENU_NORMAL_ITEM,
+  );
+
+  return $items;
+}
+
+/**
+ * 
+ * Implements hook_cron()
+ */
+function farmosnws_cron() {
+  farmosnws_get_xml();
+}
+
+/**
+ *
+ * get the weather data from the NWS
+ */
+function farmosnws_get_xml($location) {
+  // http://w1.weather.gov/xml/current_obs/${location}.xml
+
+ 
+  $weatherfeedsdir = variable_get('farmosnws_weather_feeds_dir', 'public://');
+  
+  $locations = variable_get('farmosnws_locations', '');
+  $locations_array = explode("\n", $locations);
+  $locations_count = count($locations_array);
+
+  foreach ($locations_array as $loc) {
+    $weather_feed_name = $weather_feed_dir . '/' . $loc . '_' . date();
+    $url = "http://w1.weather.gov/xml/current_obs/" . $loc . ".xml"
+
+    $response = drupal_http_request($url, array());
+   
+    file_put_contents($weather_feed_name, $response->data);
+  }
+}
+
+/**
+ * 
+ * Module configuration form
+ */
+function farmosnws_admin_form() {
+  $form = array();
+
+  $form['head'] = array(
+    '#type' => 'fieldset',
+    '#title' => 'Weather Data',
+    '#description' => t('Enter the locations that you would like weather data pulled for. Each location must be entered on a separate line.'),
+  );
+  $form['head']['farmosnws_locations'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Locations'),
+    '#description' => t('Enter the locations that you would like weather data pulled for. Each location must be entered on a separate line.'),
+    '#required' => TRUE,
+    '#default_value' => variable_get('farmosnws_locations', ''),
+  );
+  $form['farmosnws_weather_feeds_dir'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Feeds Directory'),
+    '#required' => TRUE,
+    '#description' => t('The server location were feeds will be pulled from'),
+    '#default_value' => variable_get('farmosnws_weather_feeds_dir');
+  );
+
+  return system_settings_form($form);
+}
+

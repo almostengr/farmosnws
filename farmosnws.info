@@ -1,0 +1,7 @@
+name = FarmOS NWS
+description = Imports data from the National Weather Service into FarmOS.
+core = 7.x
+dependenies[] = rules
+files[] = farmosnws.install 
+files[] = farmosnws.module
+
