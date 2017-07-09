@@ -104,14 +104,18 @@ Kenny Robinson, Bit Second Tech (www.bitsecondtech.com)
 Bugs and enhancements will be tracked using the Issue tracker
 on the [project repo](https://github.com/bitsecondal/farmosnws/issues). 
 
-If you need to report a bug, please open a new issue on this repo. Include 
-as much detail as possible so that the issue can be replicated. 
+If you need to report a bug, please open a new issue. Include 
+as much detail as possible, including screenshots and error messages, so that the issue can be replicated. 
 
 ## License 
 Project is available under the MIT License. See LICENSE for more information.
 
 ## Additional Information
+For more information about Bit Second Tech, please visit the 
+[Bit Second Tech](http://www.bitsecondtech.com) website.
+
 For more information about FarmOS, please visit the [FarmOS](http://www.farmos.org) website.
 
 For more information about the National Weather Service (NWS), please visit the 
 [NWS](http://www.weather.gov) website.
+
