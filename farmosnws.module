@@ -15,6 +15,17 @@ function farmosnws_menu() {
     'type' => MENU_NORMAL_ITEM,
   );
 
+  // TO DO: add call to bypass cron ron
+  /*
+  $items['admin/config/farmosnws/weather_force'] = array(
+    'title' => t('FarmOS NWS Data Pull'),
+    'description' => 'Pull weather data more frequently that then hourly limit.',
+    'page callback' => 'farmosnws_get_xml',
+    'access arguments' => 'administer users',
+    'type' => MENU_CALLBACK,
+  );
+  */
+
   return $items;
 }
 
@@ -23,7 +34,30 @@ function farmosnws_menu() {
  * Implements hook_cron()
  */
 function farmosnws_cron() {
-  farmosnws_get_xml();
+  $pullfeed = farmosnws_get_new_feed();
+  if ($pullfeed == TRUE) {
+    farmosnws_get_xml();
+  }
+  else {
+    watchdog('farmosnws', 'Skipping pulling weather feed.', array(), WATCHDOG_INFO, NULL);
+  }
+}
+
+/** 
+ *
+ * Determine whether to pull the data feed from the NWS based on when cron was last run
+ */
+function farmosnws_get_new_feed() {
+  $cron_last = variable_get('cron_last');
+  $time_diff = REQUEST_TIME - $cron_last;
+  
+  if ($time_diff >= 3600) {
+    $returnval = TRUE;
+  }
+  else {
+    $returnval = FALSE;
+  }
+  return $returnval;
 }
 
 /**
@@ -38,7 +72,6 @@ function farmosnws_get_xml() {
   $location_count = count($location_array);
 
   foreach ($location_array as $loc) {
-    // $weather_feed_name = $weather_feed_dir . '/' . $loc . '.' . date("Ymd.His");
     $weather_feed_name = $weather_feed_dir . '/' . $uniqid($loc, FALSE) . '.xml';
     $url = "http://w1.weather.gov/xml/current_obs/" . $loc . ".xml"
 
