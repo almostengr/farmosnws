@@ -1,7 +1,12 @@
 name = FarmOS NWS
 description = Imports data from the National Weather Service into FarmOS.
+package = FarmOS
 core = 7.x
-dependenies[] = rules, feeds
+configure=admin/config/farmosnws
+dependencies[] = feeds
+dependencies[] = feeds_fetcher_directory
+dependencies[] = feeds_xpathparser
+dependencies[] = rules
 files[] = farmosnws.install 
 files[] = farmosnws.module
 

@@ -27,7 +27,31 @@ Clone this repository by running the command below
 git clone https://github.com/bitsecondal/farmosnws.git
 ```
 
-### Create Configuration File
+### Get Weather Data via Drupal 
+* Install the module in Drupal 
+* Go to the module configuration page.
+* Go to the [XML data feeds](http://w1.weather.gov/xml/current_obs/) page on the NWS website.
+* Select the state and click Find
+* Find the location taht is closest to the area that you want to pull data for.
+* In the parenthesis next to the location, you will see a 4-character code. Copy this code.
+* Place the 4-character code on a line in the text box. If you have multiple locations that you 
+want to pull the data for, then enter each one on a separate line.
+* Enter the path where the weather files are to be saved on the server. This will be the same location
+that the Feeds module will import the files from.
+* Click *Save configuration* on the form.
+* Go to the *Feeds importer* (Structure > Feeds importer) page
+* Create a new importer and name it.
+* Select the *XPath XML Parser* as the parser.
+* Enter each of the elementst that you want to capture in the Parser Settings.
+* Configure the remainder of the settings for the Feeds Importer.
+
+#### Schedule Script
+No scheduling has to be done. Weather data will be automatically be pulled when Drupal cron run. If 
+necessary, adjust Drupal cron frequency or use [Elysia Cron][https://www.drupal.org/project/elysia_cron] 
+to run module specific cron.
+ 
+### Get Weather Data via Shell Script (Advanced)
+#### Create Configuration File
 Make a copy of the get_weather_config_ex.sh file. Update the variables located in the configuration
 script file. 
 
@@ -38,7 +62,7 @@ The *location* variable will need to be updated to the location code for the loc
 that you want data for.
 * Go to the [XML data feeds](http://w1.weather.gov/xml/current_obs/) page on the NWS website.
 * Select the state and click Find
-* Find the location that is cloest to the area that you want to pull data for. 
+* Find the location that is closest to the area that you want to pull data for. 
 * In the parenthesis next to the location, you will see a 4-character code. Copy this code.
 * Place the 4-character code in the configuration file inside quotes.
 * Save the configuration file. 
@@ -46,18 +70,18 @@ that you want data for.
 If you have multiple locations that you want to pull data for, you'll need to create a configuration 
 file for each location and set up a scheduled task for each configuration file.  
 
-### Schedule Script
+#### Schedule Script
 To set up a cron job to run to automatically pull the latest weather data, you use the details and 
 steps below. The National Weather Service updates the data hourly.
 
-#### Linux/Ubuntu with Crontab
+##### Linux/Ubuntu with Crontab
 Update the paths mentioned to the location of your script and the location of your configuration 
 file respectively. If you want to log the output of the script, also update the log location. 
 ```shell
 24 * * * * (/path/to/drupal/sites/all/modules/farmosnws/get_weather.sh /path/to/drupal/sites/all/modules/farmosnws/config.sh) >> /var/log/get_weather.log 2>&1
 ```
 
-#### Windows with Task Scheduler
+##### Windows with Task Scheduler
 You will need to install software that is capable of downloading files in Windows. Powershell 
 script should be capable of peforming this task.
 Open the Task Scheduler, located in the Control Panel.  Create a new scheduled task. When prompted 
