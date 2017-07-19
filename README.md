@@ -15,8 +15,8 @@ investment.
 ## System Requirements
 * Drupal 7
 * FarmOS
-* Ubuntu Linux (May run on other Linux versions, but has only be tested with Ubuntu Linux 14.04)
-* PHP
+* Ubuntu Linux (May run on other Linux versions, but has only be tested with Ubuntu Linux 14.04 LTS)
+* PHP 5
 * Crontab or other task scheduler capable of running shell scripts
 
 ## Setup
