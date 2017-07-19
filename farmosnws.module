@@ -9,9 +9,10 @@ function farmosnws_menu() {
 
   $items['admin/config/farmosnws'] = array(
     'title' => t('FarmOS NWS Settings'),
+    'description' => 'Add and remove additional feeds to be pulled by FarmOS NWS',
     'page callback' => 'drupal_get_form',
-    'page arguments' => 'farmosnws_admin_form',
-    'access arguments' => 'administer users',
+    'page arguments' => array('farmosnws_admin_form'),
+    'access arguments' => array('access administration pages'),
     'type' => MENU_NORMAL_ITEM,
   );
 
@@ -19,14 +20,21 @@ function farmosnws_menu() {
   /*
   $items['admin/config/farmosnws/weather_force'] = array(
     'title' => t('FarmOS NWS Data Pull'),
-    'description' => 'Pull weather data more frequently that then hourly limit.',
+    'description' => 'Pull weather data more frequently than the hourly limit.',
     'page callback' => 'farmosnws_get_xml',
-    'access arguments' => 'administer users',
+    'access arguments' => array('access administration pages'),
     'type' => MENU_CALLBACK,
   );
   */
 
   return $items;
+}
+
+/**
+ * 
+ * Writes messages to the log as well as the screen based on the message type.
+ */
+function farmosnws_log($message, $type) {
 }
 
 /**
@@ -50,7 +58,8 @@ function farmosnws_cron() {
 function farmosnws_get_new_feed() {
   $cron_last = variable_get('cron_last');
   $time_diff = REQUEST_TIME - $cron_last;
-  
+ 
+  // if the feed was last pulled over an hour ago, then set value to true.
   if ($time_diff >= 3600) {
     $returnval = TRUE;
   }
@@ -58,6 +67,33 @@ function farmosnws_get_new_feed() {
     $returnval = FALSE;
   }
   return $returnval;
+}
+
+/**
+ *
+ * Check and create if necessary the path where the weather feeds will be stored.
+ */
+function farmosnws_create_feed_dir($feedpath) {
+  $mkdirsuccess = NULL;
+
+  // check to see if the feeds directory exists. If not attempt to create it.
+  if ( is_dir($feedpath == FALSE ) {
+    $mkdirsuccess = mkdir($weatherfeedsdir, 755);
+
+    // verify directory exists
+    if ( $feedpath == FALSE ){
+      watchdog('farmosnws', 'Unable to create the weather feed directory.', array(), WATCHDOG_ERROR, NULL);
+    }
+    else {
+      watchdog('farmosnws', Created weather feed directory.', array(), WATCHDOG_INFO, NULL);
+    } // end if
+  }
+  else {
+    // skipping actions
+    $mkdirsuccess = TRUE;
+  } // end if
+
+  return $mkdirsuccess;
 }
 
 /**
@@ -88,15 +124,16 @@ function farmosnws_get_xml() {
     }
     // if no errors occur when performing the request
     else{
-      // if the directory doesnt exist, then create it
-      if ( is_dir($weatherfeedsdir) == FALSE ) {
-         mkdir($weatherfeedsdir, 775);
-         watchdog('farmosnws', 'Created weather feed directory.', array(), WATCHDOG_INFO, NULL); 
-      } // end if
+      // if the directory doesnt exist, then create it with 755 permissions
+      $direxist = farmosnws_create_feed_dir($weatherfeedsdir);
 
-      // save the contents retrieved
-      file_put_contents($weather_feed_name, $response->data);
-      watchdog('farmosnws', 'Weather data saved to ' . $weather_feed_name, array(), WATCHDOG_INFO, NULL);
+      if ( $direxist == FALSE ) {
+        drupal_set_message("Feed could not be downloaded because the directory does not exist. Please verify that Drupal has write access and try again.", 'error', FALSE);
+      } // end if
+      else {
+        // save the contents retrieved
+        file_put_contents($weather_feed_name, $response->data);
+        watchdog('farmosnws', 'Weather data saved to ' . $weather_feed_name, array(), WATCHDOG_INFO, NULL);
     }
   } // end foreach
 } // end function
@@ -119,10 +156,28 @@ function farmosnws_admin_form() {
     '#type' => 'textfield',
     '#title' => t('Feeds Directory'),
     '#required' => TRUE,
-    '#description' => t('The directory where weather feeds should be saved to.'),
+    '#description' => t('The full directory path to where weather feeds should be saved to.'),
     '#default_value' => variable_get('farmosnws_weather_feeds_dir');
   );
 
   return system_settings_form($form);
 }
+
+/**
+ * 
+ * Validate the module settings
+ */
+function farmosnws_admin_form_validate($form, &$form_state) {
+  $weatherfeedsdir = $form_state['values']['farmosnws_weather_feeds_dir'];
+
+  $direxist = farmosnws_create_feed_dir($weatherfeedsdir);
+  if ( $direxist == FALSE ){
+    watchdog('farmosnws', 'Unable to create the weather feed directory.', array(), WATCHDOG_ERROR, NULL);
+    form_set_error('farmosnws_weather_feeds_dir', 'The weather feed directory cannot be created. Please verify that Drupal as write permissions and try again.');
+  }
+  else {
+    watchdog('farmosnws', Created weather feed directory.', array(), WATCHDOG_INFO, NULL);
+  } // end if
+} // end if
+
 
