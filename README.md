@@ -1,5 +1,5 @@
 # farmosnws
-Automated importing of National Weather Service (NWS) data into FarmOS.
+A Drupal module to allow automated importing of National Weather Service (NWS) data into FarmOS.
 
 ## Purpose
 The purpose of this project is to allow FarmOS to use data from the National
@@ -42,12 +42,12 @@ that the Feeds module will import the files from.
 * Go to the *Feeds importer* (Structure > Feeds importer) page
 * Create a new importer and name it.
 * Select the *XPath XML Parser* as the parser.
-* Enter each of the elementst that you want to capture in the Parser Settings.
+* Enter each of the elements that you want to capture in the Parser Settings.
 * Configure the remainder of the settings for the Feeds Importer.
 
 #### Schedule Script
 No scheduling has to be done. Weather data will be automatically be pulled when Drupal cron run. If 
-necessary, adjust Drupal cron frequency or use [Elysia Cron][https://www.drupal.org/project/elysia_cron] 
+necessary, adjust Drupal cron frequency or use [Elysia Cron](https://www.drupal.org/project/elysia_cron)
 to run module specific cron.
  
 ### Get Weather Data via Shell Script (Advanced)
@@ -80,13 +80,6 @@ file respectively. If you want to log the output of the script, also update the 
 ```shell
 24 * * * * (/path/to/drupal/sites/all/modules/farmosnws/get_weather.sh /path/to/drupal/sites/all/modules/farmosnws/config.sh) >> /var/log/get_weather.log 2>&1
 ```
-
-##### Windows with Task Scheduler
-You will need to install software that is capable of downloading files in Windows. Powershell 
-script should be capable of peforming this task.
-Open the Task Scheduler, located in the Control Panel.  Create a new scheduled task. When prompted 
-for the command to run, enter the path to the script in your Drupal directory and the configuration
-file as an argument in the script.
 
 ## Code Updates 
 To get the latest version of this code, pull the latest release from the 
