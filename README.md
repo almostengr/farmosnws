@@ -104,7 +104,7 @@ as much detail as possible, including screenshots and error messages, so that th
 Project is available under the MIT License. See LICENSE for more information.
 
 ## Additional Information
-For more information about Bit Second Tech, please visit the 
+For more information about Bit Second Tech, please visit the
 [Bit Second Tech](http://www.bitsecondtech.com) website.
 
 For more information about FarmOS, please visit the [FarmOS](http://www.farmos.org) website.
