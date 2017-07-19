@@ -1,5 +1,5 @@
 name = FarmOS NWS
-description = Imports data from the National Weather Service into FarmOS.
+description = Imports data from the National Weather Service into Drupal for use by FarmOS.
 package = FarmOS
 core = 7.x
 configure=admin/config/farmosnws
