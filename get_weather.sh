@@ -18,6 +18,8 @@ function log_message() {
 
 function show_help() {
 # Show the help documentation
+# accepts no arguments
+
 	log_message ""
 	log_message "Usage:"
 	log_message "get_weather.sh <param>"
@@ -31,6 +33,7 @@ function show_help() {
 
 function generate_config_file() {
 # generates the configuration file by answering questions.
+# accepts no arguments
 
 	echo -n "Please answer the questions below to have a configuration file generated." 
 	echo -n "Full path to save configuration file:"
@@ -80,4 +83,5 @@ else
 	log_message "Configuration file does not exist."
 	show_help
 fi
+
 
