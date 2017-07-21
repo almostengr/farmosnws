@@ -7,6 +7,8 @@
 function farmosnws_install() {
   // Display message that module needs to be configured.
   drupal_set_message('Visit the FarmOS NWS ' . l('settings page', 'admin/config/farmosnws') . ' to configure the module.', 'warning', FALSE);
+
+  watchdog('farmosnws', 'Installed module.', array(), WATCHDOG_NOTICE, NULL);
 }
 
 /**
@@ -21,5 +23,9 @@ function farmosnws_uninstall() {
   foreach($result as $row) {
     variable_del($row->name);
   } // end foreach
+
+  watchdog('farmosnws', 'Deleted ' . $result->rowCount() . ' variable(s).', array(), WATCHDOG_INFO, NULL);
+
+  watchdog('farmosnws', 'Uninstalled module.', array(), WATCHDOG_NOTICE, NULL);
 } // end function
 
