@@ -12,14 +12,30 @@
 
 # log all of the status and error messages
 function log_message() {
-	echo $(date)" | "$*
+	# echo $(date)" | "$*
+	echo $*
 } 
+
+function show_help() {
+# Show the help documentation
+	log_message ""
+	log_message "Usage:"
+	log_message "get_weather.sh <param>"
+	log_message ""
+	log_message "Param can be replaced with one of the following:"
+	log_message "configfile - The full path of the configuration file."
+	log_message "help - Show the help information about this script."
+	log_message ""
+	log_message "For more information, visit https://github.com/bitsecondal/farmosnws"
+}
  
-## SCRIPT MAIN 
-## SCRIPT MAIN 
+## SCRIPT MAIN ## SCRIPT MAIN ## SCRIPT MAIN ##
+## SCRIPT MAIN ## SCRIPT MAIN ## SCRIPT MAIN ##
+
+FILENAME="${1}"
 
 # verify that the configuration file exists
-if [ -e $1 ]; then
+if [[ -f ${FILENAME} ]]; then
 
 	log_message "Loading the configuration"
 	
@@ -35,6 +51,7 @@ if [ -e $1 ]; then
 	
 	log_message "Done getting the weather data"
 else
-  log_message "Configuration file does not exist."
+	log_message "Configuration file does not exist."
+	show_help
 fi
 
