@@ -28,6 +28,32 @@ function show_help() {
 	log_message ""
 	log_message "For more information, visit https://github.com/bitsecondal/farmosnws"
 }
+
+function generate_config_file() {
+# generates the configuration file by answering questions.
+
+	echo -n "Please answer the questions below to have a configuration file generated." 
+	echo -n "Full path to save configuration file:"
+	read CONFIGFILENAME
+	echo -n "Path of the feeds directory:"
+	read FEEDSPATH
+	echo -n "Location Code: "
+	read LOCATIONCODE
+
+	log_message "Generating configuration file."
+
+	touch ${CONFIGFILENAME}
+
+	echo "feedsdir="${FEEDSPATH} >> ${CONFIGFILENAME}
+	echo "location="${LOCATIONCODE} >> ${CONFIGFILENAME}
+	echo "export feedsdir" >> ${CONFIGFILENAME}
+	echo "export location" >> ${CONFIGFILENAME}
+	echo ""
+	echo "# Config file generated on $(date)"
+	echo ""
+
+	log_message "Done generating configuration file."
+}
  
 ## SCRIPT MAIN ## SCRIPT MAIN ## SCRIPT MAIN ##
 ## SCRIPT MAIN ## SCRIPT MAIN ## SCRIPT MAIN ##
