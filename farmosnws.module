@@ -32,19 +32,14 @@ function farmosnws_menu() {
 
 /**
  * 
- * Writes messages to the log as well as the screen based on the message type.
- */
-function farmosnws_log($message, $type) {
-}
-
-/**
- * 
  * Implements hook_cron()
  */
 function farmosnws_cron() {
   $pullfeed = farmosnws_get_new_feed();
+  
   if ($pullfeed == TRUE) {
     farmosnws_get_xml();
+    variable_set('farmosnws_cron_last', REQUEST_TIME);
   }
   else {
     watchdog('farmosnws', 'Skipping pulling weather feed.', array(), WATCHDOG_INFO, NULL);
@@ -56,7 +51,7 @@ function farmosnws_cron() {
  * Determine whether to pull the data feed from the NWS based on when cron was last run
  */
 function farmosnws_get_new_feed() {
-  $cron_last = variable_get('cron_last');
+  $cron_last = variable_get('farmosnws_cron_last');
   $time_diff = REQUEST_TIME - $cron_last;
  
   // if the feed was last pulled over an hour ago, then set value to true.
@@ -77,15 +72,15 @@ function farmosnws_create_feed_dir($feedpath) {
   $mkdirsuccess = NULL;
 
   // check to see if the feeds directory exists. If not attempt to create it.
-  if ( is_dir($feedpath == FALSE ) {
+  if ( is_dir($feedpath) == FALSE ) {
     $mkdirsuccess = mkdir($weatherfeedsdir, 755);
 
     // verify directory exists
     if ( $feedpath == FALSE ){
-      watchdog('farmosnws', 'Unable to create the weather feed directory.', array(), WATCHDOG_ERROR, NULL);
+    watchdog('farmosnws', 'Unable to create the weather feed directory.', array(), WATCHDOG_ERROR, NULL);
     }
     else {
-      watchdog('farmosnws', Created weather feed directory.', array(), WATCHDOG_INFO, NULL);
+    watchdog('farmosnws', 'Created weather feed directory.', array(), WATCHDOG_INFO, NULL);
     } // end if
   }
   else {
@@ -109,7 +104,7 @@ function farmosnws_get_xml() {
 
   foreach ($location_array as $loc) {
     $weather_feed_name = $weather_feed_dir . '/' . $uniqid($loc, FALSE) . '.xml';
-    $url = "http://w1.weather.gov/xml/current_obs/" . $loc . ".xml"
+    $url = "http://w1.weather.gov/xml/current_obs/" . $loc . ".xml";
 
     watchdog('farmosnws', 'Getting weather data for ' . $loc, array(), WATCHDOG_INFO, NULL);
 
@@ -119,32 +114,33 @@ function farmosnws_get_xml() {
 
     // if error occurs when performing the request
     if ( $response->error ) {
-      watchdog('farmosnws', $response->error, array(), WATCHDOG_ERROR, NULL);
-      drupal_set_message($response->error, 'error', FALSE);
+    watchdog('farmosnws', $response->error, array(), WATCHDOG_ERROR, NULL);
+    drupal_set_message($response->error, 'error', FALSE);
     }
     // if no errors occur when performing the request
     else{
-      // if the directory doesnt exist, then create it with 755 permissions
-      $direxist = farmosnws_create_feed_dir($weatherfeedsdir);
+    // if the directory doesnt exist, then create it with 755 permissions
+    $direxist = farmosnws_create_feed_dir($weatherfeedsdir);
 
-      if ( $direxist == FALSE ) {
-        drupal_set_message("Feed could not be downloaded because the directory does not exist. Please verify that Drupal has write access and try again.", 'error', FALSE);
-      } // end if
-      else {
-        // save the contents retrieved
-        file_put_contents($weather_feed_name, $response->data);
-        watchdog('farmosnws', 'Weather data saved to ' . $weather_feed_name, array(), WATCHDOG_INFO, NULL);
+    if ( $direxist == FALSE ) {
+      drupal_set_message("Feed could not be downloaded because the directory does not exist. Please verify that Drupal has write access and try again.", 'error', FALSE);
+    } // end if
+    else {
+      // save the contents retrieved
+      file_put_contents($weather_feed_name, $response->data);
+      watchdog('farmosnws', 'Weather data saved to ' . $weather_feed_name, array(), WATCHDOG_INFO, NULL);
     }
+    } // end else
   } // end foreach
 } // end function
 
 /**
- * 
+ *
  * Module configuration form
  */
 function farmosnws_admin_form() {
   $form = array();
-
+  
   $form['farmosnws_locations'] = array(
     '#type' => 'textarea',
     '#title' => t('Locations'),
@@ -157,27 +153,26 @@ function farmosnws_admin_form() {
     '#title' => t('Feeds Directory'),
     '#required' => TRUE,
     '#description' => t('The full directory path to where weather feeds should be saved to.'),
-    '#default_value' => variable_get('farmosnws_weather_feeds_dir');
+    '#default_value' => variable_get('farmosnws_weather_feeds_dir'),
   );
-
+  
   return system_settings_form($form);
 }
 
 /**
- * 
+ *
  * Validate the module settings
  */
 function farmosnws_admin_form_validate($form, &$form_state) {
   $weatherfeedsdir = $form_state['values']['farmosnws_weather_feeds_dir'];
-
+  
   $direxist = farmosnws_create_feed_dir($weatherfeedsdir);
   if ( $direxist == FALSE ){
     watchdog('farmosnws', 'Unable to create the weather feed directory.', array(), WATCHDOG_ERROR, NULL);
     form_set_error('farmosnws_weather_feeds_dir', 'The weather feed directory cannot be created. Please verify that Drupal as write permissions and try again.');
   }
   else {
-    watchdog('farmosnws', Created weather feed directory.', array(), WATCHDOG_INFO, NULL);
+    watchdog('farmosnws', 'Created weather feed directory.', array(), WATCHDOG_INFO, NULL);
   } // end if
 } // end if
-
 
