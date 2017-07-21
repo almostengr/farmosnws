@@ -2,6 +2,7 @@ name = FarmOS NWS
 description = Imports data from the National Weather Service into Drupal for use by FarmOS.
 package = FarmOS
 core = 7.x
+version = 7.x-2.0.alpha1
 configure=admin/config/farmosnws
 dependencies[] = feeds
 dependencies[] = feeds_fetcher_directory
