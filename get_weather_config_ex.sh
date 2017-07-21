@@ -5,5 +5,5 @@ feedsdir=/path/to/drupal/feeds/location
 # Location code can be found by going to http://w1.weather.gov/xml/current_obs/ and searching for your location. 
 location=ABCD
 
-export ${feedsdir}
-export ${location}
+export feedsdir
+export location
