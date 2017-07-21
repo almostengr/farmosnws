@@ -32,7 +32,7 @@ function show_help() {
 }
 
 function generate_config_file() {
-# generates the configuration file by answering questions.
+# generates the configuration file by answering questions. Resolves Issue #6.
 # accepts no arguments
 
 	echo -n "Please answer the questions below to have a configuration file generated." 
@@ -47,12 +47,12 @@ function generate_config_file() {
 
 	touch ${CONFIGFILENAME}
 
-	echo "feedsdir="${FEEDSPATH} >> ${CONFIGFILENAME}
-	echo "location="${LOCATIONCODE} >> ${CONFIGFILENAME}
+	echo "feedsdir=${FEEDSPATH}" >> ${CONFIGFILENAME}
+	echo "location=${LOCATIONCODE}" >> ${CONFIGFILENAME}
 	echo "export feedsdir" >> ${CONFIGFILENAME}
 	echo "export location" >> ${CONFIGFILENAME}
 	echo ""
-	echo "# Config file generated on $(date)"
+	echo "# Config file generated on $(date)" >> ${CONFIGFILENAME}
 	echo ""
 
 	log_message "Done generating configuration file."
@@ -61,15 +61,17 @@ function generate_config_file() {
 ## SCRIPT MAIN ## SCRIPT MAIN ## SCRIPT MAIN ##
 ## SCRIPT MAIN ## SCRIPT MAIN ## SCRIPT MAIN ##
 
-FILENAME="${1}"
+# check the argument passed
+if [[ "${1}" == "genconfig" ]]; then
+	generate_config_file
 
 # verify that the configuration file exists
-if [[ -f ${FILENAME} ]]; then
+elif [[ -f ${1} ]]; then
 
 	log_message "Loading the configuration"
 	
 	# load the configuration file
-	source $1
+	source ${1}
 
 	log_message "Done loading the configuration"
 
@@ -79,6 +81,8 @@ if [[ -f ${FILENAME} ]]; then
 	/usr/bin/wget -O ${feedsdir}/${location}_$(/bin/date +%Y%m%d%H%M%S).xml http://w1.weather.gov/xml/current_obs/${location}.xml
 	
 	log_message "Done getting the weather data"
+
+# no value or invalid value passed, then show help
 else
 	log_message "Configuration file does not exist."
 	show_help
