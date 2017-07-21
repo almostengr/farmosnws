@@ -5,9 +5,8 @@
  * implements hook_install()
  */
 function farmosnws_install() {
-  variable_set('farmosnws_cron_last', 0);
-  variable_set('farmosnws_weather_feeds_dir', '');
-  variable_set('farmosnws_locations', '');
+  // Display message that module needs to be configured.
+  drupal_set_message('Visit the FarmOS NWS ' . l('settings page', 'admin/config/farmosnws') . ' to configure the module.', 'warning', FALSE);
 }
 
 /**
