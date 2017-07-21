@@ -77,10 +77,10 @@ function farmosnws_create_feed_dir($feedpath) {
 
     // verify directory exists
     if ( $feedpath == FALSE ){
-    watchdog('farmosnws', 'Unable to create the weather feed directory.', array(), WATCHDOG_ERROR, NULL);
+      watchdog('farmosnws', 'Unable to create the weather feed directory.', array(), WATCHDOG_ERROR, NULL);
     }
     else {
-    watchdog('farmosnws', 'Created weather feed directory.', array(), WATCHDOG_INFO, NULL);
+      watchdog('farmosnws', 'Created weather feed directory.', array(), WATCHDOG_INFO, NULL);
     } // end if
   }
   else {
@@ -114,22 +114,22 @@ function farmosnws_get_xml() {
 
     // if error occurs when performing the request
     if ( $response->error ) {
-    watchdog('farmosnws', $response->error, array(), WATCHDOG_ERROR, NULL);
-    drupal_set_message($response->error, 'error', FALSE);
+      watchdog('farmosnws', $response->error, array(), WATCHDOG_ERROR, NULL);
+      drupal_set_message($response->error, 'error', FALSE);
     }
     // if no errors occur when performing the request
     else{
-    // if the directory doesnt exist, then create it with 755 permissions
-    $direxist = farmosnws_create_feed_dir($weatherfeedsdir);
+      // if the directory doesnt exist, then create it with 755 permissions
+      $direxist = farmosnws_create_feed_dir($weatherfeedsdir);
 
-    if ( $direxist == FALSE ) {
-      drupal_set_message("Feed could not be downloaded because the directory does not exist. Please verify that Drupal has write access and try again.", 'error', FALSE);
-    } // end if
-    else {
-      // save the contents retrieved
-      file_put_contents($weather_feed_name, $response->data);
-      watchdog('farmosnws', 'Weather data saved to ' . $weather_feed_name, array(), WATCHDOG_INFO, NULL);
-    }
+      if ( $direxist == FALSE ) {
+        drupal_set_message("Feed could not be downloaded because the directory does not exist. Please verify that Drupal has write access and try again.", 'error', FALSE);
+      } // end if
+      else {
+        // save the contents retrieved
+        file_put_contents($weather_feed_name, $response->data);
+        watchdog('farmosnws', 'Weather data saved to ' . $weather_feed_name, array(), WATCHDOG_INFO, NULL);
+      }
     } // end else
   } // end foreach
 } // end function
