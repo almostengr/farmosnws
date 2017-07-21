@@ -15,11 +15,13 @@ function log_message() {
 	echo $(date)" | "$*
 } 
  
-## SCRIPT MAIN 
-## SCRIPT MAIN 
+## SCRIPT MAIN ## SCRIPT MAIN ## SCRIPT MAIN ##
+## SCRIPT MAIN ## SCRIPT MAIN ## SCRIPT MAIN ##
+
+FILENAME="${1}"
 
 # verify that the configuration file exists
-if [ -e $1 ]; then
+if [[ -f ${FILENAME} ]]; then
 
 	log_message "Loading the configuration"
 	
