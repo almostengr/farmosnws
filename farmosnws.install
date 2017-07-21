@@ -1,0 +1,26 @@
+<?php
+
+/**
+ *
+ * implements hook_install()
+ */
+function farmosnws_install() {
+  variable_set('farmosnws_cron_last', 0);
+  variable_set('farmosnws_weather_feeds_dir', '');
+  variable_set('farmosnws_locations', '');
+}
+
+/**
+ *
+ * implements hook_uninstall()
+ */
+function farmosnws_uninstall() {
+  // delete all the variables created by the module
+  $query = "select name from {variable} where name like :varname";
+  $result = db_query($query, array(':varname' => db_like('farmosnws') . '%'));
+
+  foreach($result as $row) {
+    variable_del($row->name);
+  } // end foreach
+} // end function
+
