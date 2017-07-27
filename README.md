@@ -68,6 +68,14 @@ If you don't want to log the output of the command, then use the command below.
 #### Windows with Task Scheduler
 This script is not designed to work on Windows.
 
+## Rules
+Rules for automating some tasks, such as cutting grass based on frequency are included in this module. 
+To import the rules, do the following: 
+1) Install the Rules and Rules UI modules.
+2) Copy and paste the text of the rule that you wish to import. The text for each of the rules are located in the rules_import directory of this module. 
+3) Go to Adminstration > Configuration > Workflow > Rules > Import Rule.
+4) Paste the text of the rule that you copied into the box and then click Import.
+
 ## Code Updates 
 To get the latest version of this code, pull the latest release from the 
 [FarmOS NWS GitHub Page](https://github.com/bitsecondal/farmosnws). 
