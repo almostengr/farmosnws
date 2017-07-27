@@ -1,4 +1,4 @@
-# farmosnws
+# FarmOS NWS
 Automated importing of National Weather Service (NWS) data into FarmOS.
 
 ## Purpose
@@ -22,7 +22,7 @@ investment.
 ## Setup
 
 ### Clone the Repository
-Clone this repository by running the command below
+To get the latest release, clone this repository by running the command below
 ```shell
 git clone https://github.com/bitsecondal/farmosnws.git
 ```
@@ -30,6 +30,10 @@ git clone https://github.com/bitsecondal/farmosnws.git
 ### Create Configuration File
 Make a copy of the get_weather_config_ex.sh file. Update the variables located in the configuration
 script file. 
+
+```shell
+get_weather.sh genconfig
+```
 
 The *feedsdir* location will need to be updated to the file system location that 
 Drupal is checking to see if data files are available. 
@@ -56,38 +60,50 @@ file respectively. If you want to log the output of the script, also update the 
 ```shell
 24 * * * * (/path/to/drupal/sites/all/modules/farmosnws/get_weather.sh /path/to/drupal/sites/all/modules/farmosnws/config.sh) >> /var/log/get_weather.log 2>&1
 ```
+If you don't want to log the output of the command, then use the command below. 
+```shell
+24 * * * * (/path/to/drupal/sites/all/modules/farmosnws/get_weather.sh /path/to/drupal/sites/all/modules/farmosnws/config.sh) >> /dev/null 2>&1
+```
 
 #### Windows with Task Scheduler
-You will need to install software that is capable of downloading files in Windows. Powershell 
-script should be capable of peforming this task.
-Open the Task Scheduler, located in the Control Panel.  Create a new scheduled task. When prompted 
-for the command to run, enter the path to the script in your Drupal directory and the configuration
-file as an argument in the script.
+This script is not designed to work on Windows.
+
+## Rules
+Rules for automating some tasks, such as cutting grass based on frequency are included in this module. 
+To import the rules, do the following: 
+1) Install the Rules and Rules UI modules.
+2) Copy and paste the text of the rule that you wish to import. The text for each of the rules are located in the rules_import directory of this module. 
+3) Go to Adminstration > Configuration > Workflow > Rules > Import Rule.
+4) Paste the text of the rule that you copied into the box and then click Import.
 
 ## Code Updates 
 To get the latest version of this code, pull the latest release from the 
 [FarmOS NWS GitHub Page](https://github.com/bitsecondal/farmosnws). 
 
-Alternatively you can get the latest code by going to the directory that contains the code and running the command below:
+Alternatively you can get the latest code by going to the directory that contains the code and running the commands below:
 ```shell
+git checkout master
 git pull origin master
 ```
  
 ## Author
-Kenny Robinson, Bit Second Tech (www.bitsecondtech.com)
+Kenny Robinson, [Bit Second Tech](www.bitsecondtech.com)
 
 ## Bug Reports and Feature Enhancements
 Bugs and enhancements will be tracked using the Issue tracker
 on the [project repo](https://github.com/bitsecondal/farmosnws/issues). 
 
 If you need to report a bug, please open a new issue on this repo. Include 
-as much detail as possible so that the issue can be replicated. 
+as much detail as possible including error messages or screenshots so that the issue can be replicated. 
 
 ## License 
 Project is available under the MIT License. See LICENSE for more information.
 
 ## Additional Information
+For more information about Bit Second Tech, please visit the [Bit Second Tech](http://www.bitsecondtech.com) website.
+
 For more information about FarmOS, please visit the [FarmOS](http://www.farmos.org) website.
 
-For more information about the National Weather Service (NWS), please visit the 
-[NWS](http://www.weather.gov) website.
+For more information about the National Weather Service (NWS), please visit the [NWS](http://www.weather.gov) website.
+
+
