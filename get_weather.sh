@@ -35,7 +35,7 @@ function generate_config_file() {
 # generates the configuration file by answering questions. Resolves Issue #6.
 # accepts no arguments
 
-	echo -n "Please answer the questions below to have a configuration file generated." 
+	echo "Please answer the questions below to have a configuration file generated." 
 	echo -n "Full path to save configuration file:"
 	read CONFIGFILENAME
 	echo -n "Path of the feeds directory:"
@@ -51,9 +51,9 @@ function generate_config_file() {
 	echo "location=${LOCATIONCODE}" >> ${CONFIGFILENAME}
 	echo "export feedsdir" >> ${CONFIGFILENAME}
 	echo "export location" >> ${CONFIGFILENAME}
-	echo ""
+	echo "" >> ${CONFIGFILENAME}
 	echo "# Config file generated on $(date)" >> ${CONFIGFILENAME}
-	echo ""
+	echo "" >> ${CONFIGFILENAME}
 
 	log_message "Done generating configuration file."
 }
