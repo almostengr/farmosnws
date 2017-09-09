@@ -1,4 +1,4 @@
-# farmosnws
+# FarmOS NWS
 A Drupal module to allow automated importing of National Weather Service (NWS) data into FarmOS.
 
 ## Purpose
@@ -67,7 +67,7 @@ that you want data for.
 * Place the 4-character code in the configuration file inside quotes.
 * Save the configuration file. 
 
-If you have multiple locations that you want to pull data for, you'll need to create a configuration 
+If you have multiple locations that you want to pull data for, you will need to create a configuration 
 file for each location and set up a scheduled task for each configuration file.  
 
 #### Schedule Script
