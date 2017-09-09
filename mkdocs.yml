@@ -7,3 +7,8 @@ remote_name: origin
 use_directory_urls: true
 strict: true
 dev_addr: 0.0.0.0:8000
+pages:
+- Home: index.md
+- Setup: setup.md
+- Updates: updates.md
+- Credits: credits.md
