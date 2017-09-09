@@ -7,5 +7,3 @@ remote_name: origin
 use_directory_urls: true
 strict: true
 dev_addr: 0.0.0.0:8000
-extra:
-	version: 7.0-2.0beta1
