@@ -1,1 +1,11 @@
-site_name: My Docs
+site_name: FarmOS NWS
+site_url: http://bitsecondal.github.io/farmosnws
+repo_url: https://github.com/bitsecondal/farmosnws.git
+site_author: Kenny Robinson
+remote_branch: gh-pages
+remote_name: origin
+use_directory_urls: true
+strict: true
+dev_addr: 0.0.0.0:8000
+extra:
+	version: 7.0-2.0beta1
