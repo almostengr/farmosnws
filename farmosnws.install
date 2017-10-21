@@ -10,6 +10,15 @@ function farmosnws_install() {
 
 /**
  * 
+ * implements hook_enable()
+ */
+function hook_enable() {
+  // notice to visit configuration page to set initial values for variables
+  drupal_set_message("Visit the module configuration page to complete setup.", 'warning', FALSE);	
+}
+
+/**
+ * 
  * implements hook_uninstall()
  */
 function farmosnws_uninstall() {
@@ -45,5 +54,3 @@ function farmosnws_uninstall() {
 
   watchdog('farmosnws', 'FarmOS NWS module has been uninstalled.', array(), WATCHDOG_INFO, NULL);
 } // end function
-
-
