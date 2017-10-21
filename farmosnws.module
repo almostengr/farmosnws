@@ -107,26 +107,36 @@ function farmosnws_get_xml() {
   $weatherfeedsdir = variable_get('farmosnws_weather_feeds_dir');
   
   $locations = variable_get('farmosnws_locations', '');
-  $location_array = explode("\n", $locations);
+  $location_array = explode(",", $locations);
   $location_count = count($location_array);
   
   foreach ($location_array as $loc) {
+    // remove carriage returns and new lines
+    $loc = str_replace(" ", "", str_replace("\r", "", str_replace("\n", "", $loc)));
+    // $loc = str_replace(" ", "", $loc);
+
     $weather_feed_name = $weatherfeedsdir . '/' . uniqid($loc, FALSE) . '.xml';
     $url = "http://w1.weather.gov/xml/current_obs/" . $loc . ".xml";
+  
+    watchdog('farmosnws', $url, array(), WATCHDOG_DEBUG, NULL);
     
     watchdog('farmosnws', 'Getting weather data for ' . $loc, array(), WATCHDOG_INFO, NULL);
     
     $response = drupal_http_request($url, array());
     
-    watchdog('farmosnws', 'Response code: ' . $response->code, array(), WATCHDOG_INFO, NULL);
+//     watchdog('farmosnws', 'Response code: ' . $response->code, array(), WATCHDOG_INFO, NULL);
+
+ // watchdog('farmosnws', 'Response code: ' . $response->code . '. '  $response->error, array(), WATCHDOG_ERROR, NULL);
     
     // if error occurs when performing the request
     if ( $response->error ) {
-      watchdog('farmosnws', $response->error, array(), WATCHDOG_ERROR, NULL);
-      drupal_set_message($response->error, 'error', FALSE);
+      watchdog('farmosnws', 'Response code: ' . $response->code . '. ' . $response->error, array(), WATCHDOG_ERROR, NULL);
+      // drupal_set_message($response->error, 'error', FALSE);
     }
     // if no errors occur when performing the request
     else{
+      watchdog('farmosnws', 'Response code: ' . $response->code, array(), WATCHDOG_INFO, NULL);
+
       // if the directory doesnt exist, then create it with 755 permissions
       $direxist = farmosnws_create_feed_dir($weatherfeedsdir);
       
@@ -138,6 +148,8 @@ function farmosnws_get_xml() {
         // save the contents retrieved
         file_put_contents($weather_feed_name, $response->data);
         watchdog('farmosnws', 'Weather data saved to ' . $weather_feed_name, array(), WATCHDOG_INFO, NULL);
+
+        farmosnws_save_feed_data($weather_feed_name);
       }
     } // end else
   } // end foreach
