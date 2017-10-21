@@ -166,75 +166,88 @@ function farmosnws_save_feed_data($feedfilename) {
   $xml = simplexml_load_file($feedfilename);
   
   // log the temperature f
-  $observation_log = log_type_load('farm_observation');
-  $observation_log->name = $xml->location . " at " . $xml->observation_time_rfc822;
-  $observation_log->field_farm_quantity_value = $xml->temp_f;
-  $observation_log->field_farm_quantity_units = "Fahrenheit";
-  // $observation_log->field_farm_observation_type = "";
-  $observation_log->field_farm_log_owner = $user->uid;
-  $observation_log->timestamp = $xml->observation_time_rfc822;
-  $observation_log->done = 1;
-  log_save($observation_log);
+//   $observation_log = log_type_load('farm_observation');
+//   $observation_log->name = $xml->location . " at " . $xml->observation_time_rfc822;
+//   $observation_log->field_farm_quantity_value = $xml->temp_f;
+//   $observation_log->field_farm_quantity_units = "Fahrenheit";
+//   // $observation_log->field_farm_observation_type = "";
+//   $observation_log->field_farm_log_owner = $user->uid;
+//   $observation_log->timestamp = $xml->observation_time_rfc822;
+//   $observation_log->done = 1;
+//   log_save($observation_log);
+
+  $log = entity_create('log', array('type' => 'farm_observation'));
+  $log_wrapper = entity_metadata_wrapper('log', $log);
+  $log_wrapper->name = $xml->location . " at " . $xml->observation_time_rfc822;
+  $log_wrapper->field_farm_quantity_value = $xml->temp_f;
+  $log_wrapper->field_farm_quantity_units = "Fahrenheit";
+  // $log_wrapper->field_farm_observation_type = "";
+  $log_wrapper->field_farm_log_owner = $user->uid;
+  $log_wrapper->timestamp = $xml->observation_time_rfc822;
+  $log_wrapper->done = 1;
+  
+  $log_wrapper->save();
+  
   watchdog('farmosnws', 'Temperature data saved from ' . $feedfilename, array(), WATCHDOG_INFO, NULL);
   
   // log the relative humidity
-  $observation_log = log_type_load('farm_observation');
-  $observation_log->name = $xml->location . " at " . $xml->observation_time_rfc822;
-  $observation_log->field_farm_quantity_value = $xml->relative_humidity;
-  $observation_log->field_farm_quantity_units = "% Humidity";
-  // $observation_log->field_farm_observation_type = "";
-  $observation_log->field_farm_log_owner = $user->uid;
-  $observation_log->timestamp = $xml->observation_time_rfc822;
-  $observation_log->done = 1;
-  log_save($observation_log);
-  watchdog('farmosnws', 'Relative humidity data saved from ' . $feedfilename, array(), WATCHDOG_INFO, NULL);
+//   $observation_log = log_type_load('farm_observation');
+//   $observation_log->name = $xml->location . " at " . $xml->observation_time_rfc822;
+//   $observation_log->field_farm_quantity_value = $xml->relative_humidity;
+//   $observation_log->field_farm_quantity_units = "% Humidity";
+//   // $observation_log->field_farm_observation_type = "";
+//   $observation_log->field_farm_log_owner = $user->uid;
+//   $observation_log->timestamp = $xml->observation_time_rfc822;
+//   $observation_log->done = 1;
+//   log_save($observation_log);
+//   watchdog('farmosnws', 'Relative humidity data saved from ' . $feedfilename, array(), WATCHDOG_INFO, NULL);
     
-  // log the wind speed
-  $observation_log = log_type_load('farm_observation');
-  $observation_log->name = $xml->location . " at " . $xml->observation_time_rfc822;
-  $observation_log->field_farm_quantity_value = $xml->wind_mph;
-  $observation_log->field_farm_quantity_units = "MPH";
-  // $observation_log->field_farm_observation_type = "";
-  $observation_log->field_farm_log_owner = $user->uid;
-  $observation_log->timestamp = $xml->observation_time_rfc822;
-  $observation_log->done = 1;
-  log_save($observation_log);
-  watchdog('farmosnws', 'Wind speed data saved from ' . $feedfilename, array(), WATCHDOG_INFO, NULL);
+//   // log the wind speed
+//   $observation_log = log_type_load('farm_observation');
+//   $observation_log->name = $xml->location . " at " . $xml->observation_time_rfc822;
+//   $observation_log->field_farm_quantity_value = $xml->wind_mph;
+//   $observation_log->field_farm_quantity_units = "MPH";
+//   // $observation_log->field_farm_observation_type = "";
+//   $observation_log->field_farm_log_owner = $user->uid;
+//   $observation_log->timestamp = $xml->observation_time_rfc822;
+//   $observation_log->done = 1;
+//   log_save($observation_log);
+//   watchdog('farmosnws', 'Wind speed data saved from ' . $feedfilename, array(), WATCHDOG_INFO, NULL);
   
-  // log the wind direction
-  $observation_log = log_type_load('farm_observation');
-  $observation_log->name = $xml->location . " at " . $xml->observation_time_rfc822;
-  $observation_log->field_farm_quantity_value = $xml->wind_dir;
-  $observation_log->field_farm_quantity_units = "Direction";
-  // $observation_log->field_farm_observation_type = "";
-  $observation_log->field_farm_log_owner = $user->uid;
-  $observation_log->timestamp = $xml->observation_time_rfc822;
-  $observation_log->done = 1;
-  log_save($observation_log);
-  watchdog('farmosnws', 'Wind direction data saved from ' . $feedfilename, array(), WATCHDOG_INFO, NULL);
+//   // log the wind direction
+//   $observation_log = log_type_load('farm_observation');
+//   $observation_log->name = $xml->location . " at " . $xml->observation_time_rfc822;
+//   $observation_log->field_farm_quantity_value = $xml->wind_dir;
+//   $observation_log->field_farm_quantity_units = "Direction";
+//   // $observation_log->field_farm_observation_type = "";
+//   $observation_log->field_farm_log_owner = $user->uid;
+//   $observation_log->timestamp = $xml->observation_time_rfc822;
+//   $observation_log->done = 1;
+//   log_save($observation_log);
+//   watchdog('farmosnws', 'Wind direction data saved from ' . $feedfilename, array(), WATCHDOG_INFO, NULL);
   
-  // log the barametric pressure
-  $observation_log = log_type_load('farm_observation');
-  $observation_log->name = $xml->location . " at " . $xml->observation_time_rfc822;
-  $observation_log->field_farm_quantity_value = $xml->pressure_in;
-  $observation_log->field_farm_quantity_units = "Inches";
-  // $observation_log->field_farm_observation_type = "";
-  $observation_log->field_farm_log_owner = $user->uid;
-  $observation_log->timestamp = $xml->observation_time_rfc822;
-  $observation_log->done = 1;
-  log_save($observation_log);
-  watchdog('farmosnws', 'Barametric pressure data saved from ' . $feedfilename, array(), WATCHDOG_INFO, NULL);
+//   // log the barametric pressure
+//   $observation_log = log_type_load('farm_observation');
+//   $observation_log->name = $xml->location . " at " . $xml->observation_time_rfc822;
+//   $observation_log->field_farm_quantity_value = $xml->pressure_in;
+//   $observation_log->field_farm_quantity_units = "Inches";
+//   // $observation_log->field_farm_observation_type = "";
+//   $observation_log->field_farm_log_owner = $user->uid;
+//   $observation_log->timestamp = $xml->observation_time_rfc822;
+//   $observation_log->done = 1;
+//   log_save($observation_log);
+//   watchdog('farmosnws', 'Barametric pressure data saved from ' . $feedfilename, array(), WATCHDOG_INFO, NULL);
   
-  // log the visibility
-  $observation_log = log_type_load('farm_observation');
-  $observation_log->name = $xml->location . " at " . $xml->observation_time_rfc822;
-  $observation_log->field_farm_quantity_value = $xml->visibility_mi;
-  $observation_log->field_farm_quantity_units = "Miles";
-  // $observation_log->field_farm_observation_type = "";
-  $observation_log->field_farm_log_owner = $user->uid;
-  $observation_log->timestamp = $xml->observation_time_rfc822;
-  $observation_log->done = 1;
-  log_save($observation_log);
-  watchdog('farmosnws', 'Visibility data saved from ' . $feedfilename, array(), WATCHDOG_INFO, NULL);
+//   // log the visibility
+//   $observation_log = log_type_load('farm_observation');
+//   $observation_log->name = $xml->location . " at " . $xml->observation_time_rfc822;
+//   $observation_log->field_farm_quantity_value = $xml->visibility_mi;
+//   $observation_log->field_farm_quantity_units = "Miles";
+//   // $observation_log->field_farm_observation_type = "";
+//   $observation_log->field_farm_log_owner = $user->uid;
+//   $observation_log->timestamp = $xml->observation_time_rfc822;
+//   $observation_log->done = 1;
+//   log_save($observation_log);
+//   watchdog('farmosnws', 'Visibility data saved from ' . $feedfilename, array(), WATCHDOG_INFO, NULL);
 }
 
