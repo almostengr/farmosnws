@@ -3,6 +3,8 @@
 /**
  *
  * Module configuration form
+ * 
+ * @return Returns loaded form array object
  */
 function farmosnws_admin_form() {
   $form = array();
