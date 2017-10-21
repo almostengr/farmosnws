@@ -111,7 +111,7 @@ function farmosnws_get_xml() {
   $location_count = count($location_array);
   
   foreach ($location_array as $loc) {
-    $weather_feed_name = $weather_feed_dir . '/' . $uniqid($loc, FALSE) . '.xml';
+    $weather_feed_name = $weatherfeedsdir . '/' . uniqid($loc, FALSE) . '.xml';
     $url = "http://w1.weather.gov/xml/current_obs/" . $loc . ".xml";
     
     watchdog('farmosnws', 'Getting weather data for ' . $loc, array(), WATCHDOG_INFO, NULL);
