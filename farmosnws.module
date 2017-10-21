@@ -160,7 +160,8 @@ function farmosnws_get_xml() {
  * @param unknown $feedfilename
  */
 function farmosnws_save_feed_data($feedfilename) {
-  
+  global $user;
+
   // load the file
   $xml = simplexml_load_file($feedfilename);
   
@@ -170,7 +171,7 @@ function farmosnws_save_feed_data($feedfilename) {
   $observation_log->field_farm_quantity_value = $xml->temp_f;
   $observation_log->field_farm_quantity_units = "Fahrenheit";
   // $observation_log->field_farm_observation_type = "";
-  $observation_log->field_farm_log_owner = 0;
+  $observation_log->field_farm_log_owner = $user->uid;
   $observation_log->timestamp = $xml->observation_time_rfc822;
   $observation_log->done = 1;
   log_save($observation_log);
@@ -182,7 +183,7 @@ function farmosnws_save_feed_data($feedfilename) {
   $observation_log->field_farm_quantity_value = $xml->relative_humidity;
   $observation_log->field_farm_quantity_units = "% Humidity";
   // $observation_log->field_farm_observation_type = "";
-  $observation_log->field_farm_log_owner = 0;
+  $observation_log->field_farm_log_owner = $user->uid;
   $observation_log->timestamp = $xml->observation_time_rfc822;
   $observation_log->done = 1;
   log_save($observation_log);
@@ -194,7 +195,7 @@ function farmosnws_save_feed_data($feedfilename) {
   $observation_log->field_farm_quantity_value = $xml->wind_mph;
   $observation_log->field_farm_quantity_units = "MPH";
   // $observation_log->field_farm_observation_type = "";
-  $observation_log->field_farm_log_owner = 0;
+  $observation_log->field_farm_log_owner = $user->uid;
   $observation_log->timestamp = $xml->observation_time_rfc822;
   $observation_log->done = 1;
   log_save($observation_log);
@@ -206,7 +207,7 @@ function farmosnws_save_feed_data($feedfilename) {
   $observation_log->field_farm_quantity_value = $xml->wind_dir;
   $observation_log->field_farm_quantity_units = "Direction";
   // $observation_log->field_farm_observation_type = "";
-  $observation_log->field_farm_log_owner = 0;
+  $observation_log->field_farm_log_owner = $user->uid;
   $observation_log->timestamp = $xml->observation_time_rfc822;
   $observation_log->done = 1;
   log_save($observation_log);
@@ -218,7 +219,7 @@ function farmosnws_save_feed_data($feedfilename) {
   $observation_log->field_farm_quantity_value = $xml->pressure_in;
   $observation_log->field_farm_quantity_units = "Inches";
   // $observation_log->field_farm_observation_type = "";
-  $observation_log->field_farm_log_owner = 0;
+  $observation_log->field_farm_log_owner = $user->uid;
   $observation_log->timestamp = $xml->observation_time_rfc822;
   $observation_log->done = 1;
   log_save($observation_log);
@@ -230,7 +231,7 @@ function farmosnws_save_feed_data($feedfilename) {
   $observation_log->field_farm_quantity_value = $xml->visibility_mi;
   $observation_log->field_farm_quantity_units = "Miles";
   // $observation_log->field_farm_observation_type = "";
-  $observation_log->field_farm_log_owner = 0;
+  $observation_log->field_farm_log_owner = $user->uid;
   $observation_log->timestamp = $xml->observation_time_rfc822;
   $observation_log->done = 1;
   log_save($observation_log);
