@@ -18,9 +18,9 @@ function farmosnws_admin_form() {
   );
   
   $form['farmosnws_locations'] = array(
-    '#type' => 'textarea',
+    '#type' => 'textfield',
     '#title' => t('Locations'),
-    '#description' => t('Enter the locations that you would like weather data pulled for. Each location must be entered on a separate line.'),
+    '#description' => t('Enter the locations that you would like weather data pulled for. Each location must be entered must be separated by commas.'),
     '#required' => TRUE,
     '#default_value' => variable_get('farmosnws_locations'),
   );
