@@ -4,4 +4,217 @@
  * Code for the FarmOS NWS feature.
  */
 
-include_once 'farmosnws.features.inc';
+/**
+ *
+ * Implements hook_menu()
+ * 
+ * @return Array of menu links
+ */
+function farmosnws_menu() {
+  $items = array();
+  
+  $items['admin/config/services/farmosnws'] = array(
+    'title' => t('FarmOS NWS Settings'),
+    'description' => 'Add and remove additional feeds to be pulled by FarmOS NWS',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('farmosnws_admin_form'),
+    'access arguments' => array('access administration pages'),
+  	'file' => 'farmosnws.admin.inc',
+  );
+  
+  return $items;
+}
+
+/**
+ *
+ * Implements hook_cron()
+ */
+function farmosnws_cron() {
+  /*
+  $pullfeed = farmosnws_get_new_feed();
+  
+  if ($pullfeed == TRUE) {
+    farmosnws_get_xml();
+    variable_set('farmosnws_cron_last', REQUEST_TIME);
+  }
+  else {
+    watchdog('farmosnws', 'Skipping pulling weather feed.', array(), WATCHDOG_INFO, NULL);
+  }
+  */
+  
+  farmosnws_get_xml();
+  variable_set('farmosnws_cron_last', REQUEST_TIME);
+}
+
+/**
+ *
+ * Determine whether to pull the data feed from the NWS based on when cron was last run
+ * 
+ * @return
+ *   Returns whether the feed should be pulled or not.
+ */
+function farmosnws_feed_limiter() {
+  $cron_last = variable_get('farmosnws_cron_last', 0);
+  $time_diff = REQUEST_TIME - $cron_last;
+  
+  // if the feed was last pulled over an hour ago, then set value to true.
+  if ($time_diff >= 3600) {
+    $returnval = TRUE;
+  }
+  else {
+    $returnval = FALSE;
+  }
+  return $returnval;
+}
+
+/**
+ *
+ * Check and create if necessary the path where the weather feeds will be stored.
+ * 
+ * @param string feedpath
+ *   String to the path that contains the feeds 
+ *   
+ * @return Returns whether the directory exists or not.
+ */
+function farmosnws_create_feed_dir($feedpath) {
+  $mkdirsuccess = NULL;
+  
+  // check to see if the feeds directory exists. If not attempt to create it.
+  if ( is_dir($feedpath) == FALSE ) {
+    $mkdirsuccess = mkdir($weatherfeedsdir, 755);
+    
+    // verify directory exists
+    if ( $feedpath == FALSE ){
+      watchdog('farmosnws', 'Unable to create the weather feed directory.', array(), WATCHDOG_ERROR, NULL);
+    }
+    else {
+      watchdog('farmosnws', 'Created weather feed directory.', array(), WATCHDOG_INFO, NULL);
+    } // end if
+  }
+  else {
+    // skipping actions
+    $mkdirsuccess = TRUE;
+  } // end if
+  
+  return $mkdirsuccess;
+}
+
+/**
+ *
+ * Get the weather data from the NWS
+ */
+function farmosnws_get_xml() {
+  $weatherfeedsdir = variable_get('farmosnws_weather_feeds_dir');
+  
+  $locations = variable_get('farmosnws_locations', '');
+  $location_array = explode("\n", $locations);
+  $location_count = count($location_array);
+  
+  foreach ($location_array as $loc) {
+    $weather_feed_name = $weather_feed_dir . '/' . $uniqid($loc, FALSE) . '.xml';
+    $url = "http://w1.weather.gov/xml/current_obs/" . $loc . ".xml";
+    
+    watchdog('farmosnws', 'Getting weather data for ' . $loc, array(), WATCHDOG_INFO, NULL);
+    
+    $response = drupal_http_request($url, array());
+    
+    watchdog('farmosnws', 'Response code: ' . $response->code, array(), WATCHDOG_INFO, NULL);
+    
+    // if error occurs when performing the request
+    if ( $response->error ) {
+      watchdog('farmosnws', $response->error, array(), WATCHDOG_ERROR, NULL);
+      drupal_set_message($response->error, 'error', FALSE);
+    }
+    // if no errors occur when performing the request
+    else{
+      // if the directory doesnt exist, then create it with 755 permissions
+      $direxist = farmosnws_create_feed_dir($weatherfeedsdir);
+      
+      if ( $direxist == FALSE ) {
+        drupal_set_message("Feed could not be downloaded because the directory does not exist. Please verify that Drupal has write access and try again.", 'error', FALSE);
+      } // end if
+      else {
+        // save the contents retrieved
+        file_put_contents($weather_feed_name, $response->data);
+        watchdog('farmosnws', 'Weather data saved to ' . $weather_feed_name, array(), WATCHDOG_INFO, NULL);
+      }
+    } // end else
+  } // end foreach
+} // end function
+
+/**
+ * 
+ * @param unknown $feedfilename
+ */
+function farmosnws_save_feed_data($feedfilename) {
+  
+  // load the file
+  $xml = simplexml_load_file($feedfilename);
+  
+  // log the temperature f
+  $observation_log = log_type_load('farm_observation');
+  $observation_log->name = $xml->location . " at " . $xml->observation_time_rfc822;
+  $observation_log->field_farm_quantity_value = $xml->temp_f;
+  $observation_log->field_farm_quantity_units = "Fahrenheit";
+  // $observation_log->field_farm_observation_type = "";
+  $observation_log->field_farm_log_owner = 0;
+  $observation_log->timestamp = $xml->observation_time_rfc822;
+  $observation_log->done = 1;
+  log_save($observation_log);
+  
+  // log the relative humidity
+  $observation_log = log_type_load('farm_observation');
+  $observation_log->name = $xml->location . " at " . $xml->observation_time_rfc822;
+  $observation_log->field_farm_quantity_value = $xml->relative_humidity;
+  $observation_log->field_farm_quantity_units = "% Humidity";
+  // $observation_log->field_farm_observation_type = "";
+  $observation_log->field_farm_log_owner = 0;
+  $observation_log->timestamp = $xml->observation_time_rfc822;
+  $observation_log->done = 1;
+  log_save($observation_log);
+    
+  // log the wind speed
+  $observation_log = log_type_load('farm_observation');
+  $observation_log->name = $xml->location . " at " . $xml->observation_time_rfc822;
+  $observation_log->field_farm_quantity_value = $xml->wind_mph;
+  $observation_log->field_farm_quantity_units = "MPH";
+  // $observation_log->field_farm_observation_type = "";
+  $observation_log->field_farm_log_owner = 0;
+  $observation_log->timestamp = $xml->observation_time_rfc822;
+  $observation_log->done = 1;
+  log_save($observation_log);
+  
+  // log the wind direction
+  $observation_log = log_type_load('farm_observation');
+  $observation_log->name = $xml->location . " at " . $xml->observation_time_rfc822;
+  $observation_log->field_farm_quantity_value = $xml->wind_dir;
+  $observation_log->field_farm_quantity_units = "Direction";
+  // $observation_log->field_farm_observation_type = "";
+  $observation_log->field_farm_log_owner = 0;
+  $observation_log->timestamp = $xml->observation_time_rfc822;
+  $observation_log->done = 1;
+  log_save($observation_log);
+  
+  // log the barametric pressure
+  $observation_log = log_type_load('farm_observation');
+  $observation_log->name = $xml->location . " at " . $xml->observation_time_rfc822;
+  $observation_log->field_farm_quantity_value = $xml->pressure_in;
+  $observation_log->field_farm_quantity_units = "Inches";
+  // $observation_log->field_farm_observation_type = "";
+  $observation_log->field_farm_log_owner = 0;
+  $observation_log->timestamp = $xml->observation_time_rfc822;
+  $observation_log->done = 1;
+  log_save($observation_log);
+  
+  // log the visibility
+  $observation_log = log_type_load('farm_observation');
+  $observation_log->name = $xml->location . " at " . $xml->observation_time_rfc822;
+  $observation_log->field_farm_quantity_value = $xml->visibility_mi;
+  $observation_log->field_farm_quantity_units = "Miles";
+  // $observation_log->field_farm_observation_type = "";
+  $observation_log->field_farm_log_owner = 0;
+  $observation_log->timestamp = $xml->observation_time_rfc822;
+  $observation_log->done = 1;
+  log_save($observation_log);
+}
+
