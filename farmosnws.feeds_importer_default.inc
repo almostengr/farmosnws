@@ -15,7 +15,7 @@ function farmosnws_feeds_importer_default() {
   $feeds_importer->api_version = 1;
   $feeds_importer->id = 'import_weather_conditions_kmgm';
   $feeds_importer->config = array(
-    'name' => 'Import Weather Conditions',
+    'name' => 'Import Weather Conditions KMGM',
     'description' => 'Import weather conditions from the National Weather Service',
     'fetcher' => array(
       'plugin_key' => 'feeds_fetcher_directory_fetcher',
@@ -24,7 +24,7 @@ function farmosnws_feeds_importer_default() {
         'directory' => 'public://curweather',
         'filemask' => '/\\.xml$/',
         'updated_files' => 1,
-        'after_processed' => '0',
+        'after_processed' => '1',
         'move_to_folder' => '',
       ),
     ),
@@ -79,7 +79,7 @@ function farmosnws_feeds_importer_default() {
       'plugin_key' => 'FeedsNodeProcessor',
       'config' => array(
         'expire' => '-1',
-        'author' => '47',
+        'author' => '28',
         'authorize' => 0,
         'mappings' => array(
           0 => array(

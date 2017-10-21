@@ -9,10 +9,11 @@
  */
 function farmosnws_default_rules_configuration() {
   $items = array();
-  $items['rules_pull_data_from_nws'] = entity_import('rules_config', '{ "rules_pull_data_from_nws" : {
-      "LABEL" : "Pull data from NWS",
+  $items['rules_download_nws_weather_data'] = entity_import('rules_config', '{ "rules_download_nws_weather_data" : {
+      "LABEL" : "Download NWS Weather Data",
       "PLUGIN" : "reaction rule",
       "OWNER" : "rules",
+      "TAGS" : [ "data", "nws", "weather" ],
       "REQUIRES" : [ "rules_download", "rules" ],
       "ON" : { "cron" : [] },
       "DO" : [
@@ -21,7 +22,6 @@ function farmosnws_default_rules_configuration() {
               "path" : "http:\\/\\/w1.weather.gov\\/xml\\/current_obs\\/KMGM.xml",
               "cookie" : "0",
               "uri_scheme" : "public",
-              "file_directory" : "curweather",
               "temporary" : "0",
               "replace" : "0"
             },
