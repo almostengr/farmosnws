@@ -22,7 +22,7 @@ git clone https://github.com/bitsecondal/farmosnws.git
 
 5) Select the state and click Find
 
-6) Find the location taht is closest to the area that you want to pull data for.
+6) Find the location that is closest to the area that you want to pull data for.
 
 7) In the parenthesis next to the location, you will see a 4-character code. Copy this code.
 
