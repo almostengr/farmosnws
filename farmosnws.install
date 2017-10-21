@@ -29,27 +29,7 @@ function farmosnws_uninstall() {
   foreach($result as $row) {
     variable_del($row->name);
   } // end foreach
-
-  // delete all the nodes that have been created by the module 
-  $query = "select nid where {node} where type = :ntype";
-  $result = db_query($result, array(':ntype' => 'imported_weather_conditions'));
-
-  foreach($result as $row) {
-    $nodes[] = $row->nid;
-  } 
-
-  if (!empty($nodes)) {
-    // delete the nodes
-    node_delete_multiple($nodes);
-  }
-
-  // delete the content type
-  if ( node_type_load('imported_weather_conditions')) {
-    node_type_delete('imported_weather_conditions');
-    drupal_set_message(t('%type content type has been deleted.', array('%type' => 'imported_weather_conditions')));
-  } // end if
-
-  node_types_rebuild();
+  
   menu_rebuild();
 
   watchdog('farmosnws', 'FarmOS NWS module has been uninstalled.', array(), WATCHDOG_INFO, NULL);
