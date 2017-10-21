@@ -3,7 +3,7 @@ description = Imports data from the National Weather Service into Drupal for use
 core = 7.x
 package = farmOS
 version = 7.x-2.0-beta5
-dependencies[] = farmos_log_observation
+dependencies[] = farm_log_observation
 
 files[] = farmosnws.module
 files[] = farmosnws.admin.inc
