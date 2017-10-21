@@ -132,6 +132,7 @@ function farmosnws_get_xml() {
       
       if ( $direxist == FALSE ) {
         drupal_set_message("Feed could not be downloaded because the directory does not exist. Please verify that Drupal has write access and try again.", 'error', FALSE);
+        watchdog('farmosnws', 'Feed could not be downloaded because the directory does not exist.', array(), WATCHDOG_ERROR, NULL);
       } // end if
       else {
         // save the contents retrieved
@@ -161,6 +162,7 @@ function farmosnws_save_feed_data($feedfilename) {
   $observation_log->timestamp = $xml->observation_time_rfc822;
   $observation_log->done = 1;
   log_save($observation_log);
+  watchdog('farmosnws', 'Temperature data saved from ' . $feedfilename, array(), WATCHDOG_INFO, NULL);
   
   // log the relative humidity
   $observation_log = log_type_load('farm_observation');
@@ -172,6 +174,7 @@ function farmosnws_save_feed_data($feedfilename) {
   $observation_log->timestamp = $xml->observation_time_rfc822;
   $observation_log->done = 1;
   log_save($observation_log);
+  watchdog('farmosnws', 'Relative humidity data saved from ' . $feedfilename, array(), WATCHDOG_INFO, NULL);
     
   // log the wind speed
   $observation_log = log_type_load('farm_observation');
@@ -183,6 +186,7 @@ function farmosnws_save_feed_data($feedfilename) {
   $observation_log->timestamp = $xml->observation_time_rfc822;
   $observation_log->done = 1;
   log_save($observation_log);
+  watchdog('farmosnws', 'Wind speed data saved from ' . $feedfilename, array(), WATCHDOG_INFO, NULL);
   
   // log the wind direction
   $observation_log = log_type_load('farm_observation');
@@ -194,6 +198,7 @@ function farmosnws_save_feed_data($feedfilename) {
   $observation_log->timestamp = $xml->observation_time_rfc822;
   $observation_log->done = 1;
   log_save($observation_log);
+  watchdog('farmosnws', 'Wind direction data saved from ' . $feedfilename, array(), WATCHDOG_INFO, NULL);
   
   // log the barametric pressure
   $observation_log = log_type_load('farm_observation');
@@ -205,6 +210,7 @@ function farmosnws_save_feed_data($feedfilename) {
   $observation_log->timestamp = $xml->observation_time_rfc822;
   $observation_log->done = 1;
   log_save($observation_log);
+  watchdog('farmosnws', 'Barametric pressure data saved from ' . $feedfilename, array(), WATCHDOG_INFO, NULL);
   
   // log the visibility
   $observation_log = log_type_load('farm_observation');
@@ -216,5 +222,6 @@ function farmosnws_save_feed_data($feedfilename) {
   $observation_log->timestamp = $xml->observation_time_rfc822;
   $observation_log->done = 1;
   log_save($observation_log);
+  watchdog('farmosnws', 'Visibility data saved from ' . $feedfilename, array(), WATCHDOG_INFO, NULL);
 }
 
