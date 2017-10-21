@@ -12,9 +12,9 @@ function farmosnws_install() {
  * 
  * implements hook_enable()
  */
-function hook_enable() {
+function farmosnws_enable() {
   // notice to visit configuration page to set initial values for variables
-  drupal_set_message("Visit the module configuration page to complete setup.", 'warning', FALSE);	
+  drupal_set_message(t("Visit the module " . l("configuration page", 'admin/config/services/farmosnws') . " to complete module setup."), 'warning', FALSE);	
 }
 
 /**
