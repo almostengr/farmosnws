@@ -5,6 +5,19 @@
  * implements hook_install()
  */
 function farmosnws_install() {
+  // check for the Fahrenheit taxonomy type
+  $taxterm = taxonomy_get_term_by_name('Fahrenheit');
+  
+  if (count($taxterm) == 0) {
+    $term = new stdClass();
+    $term->name = "Fahrenheit";
+    
+    $vocab = taxonomy_vocabulary_machine_name_load('Farm Quantity Units');
+    
+    $term->vid = $vocab->vid;
+    taxonomy_term_save($term);
+  }
+ 
   watchdog('farmosnws', 'FarmOS NWS module has been installed.', array(), WATCHDOG_INFO, NULL);
 }
 
