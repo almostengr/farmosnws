@@ -158,6 +158,9 @@ function farmosnws_get_xml() {
 /**
  * 
  * @param unknown $feedfilename
+ * 
+ * @tutorial http://audiblecode.com/blog/programmatically-create-and-update-field-collection-item-node-entity-api
+ * @tutorial http://drupal.org/node/1842304
  */
 function farmosnws_save_feed_data($feedfilename) {
   global $user;
@@ -165,33 +168,30 @@ function farmosnws_save_feed_data($feedfilename) {
   // load the file
   $xml = simplexml_load_file($feedfilename);
   
-  // log the temperature f
-
   $qty = entity_create('farm_quantity', array('type' => 'farm_quantity'));
   $qty->value = $xml->temp_f;
   entity_save('farm_quantity', $qty);
 
   $log = entity_create('log', array('type' => 'farm_observation'));
-  # $log->field_farm_notes
-  // $log_wrapper = entity_metadata_wrapper('log', $log);
-  // $log_wrapper->name = $xml->location . " at " . $xml->observation_time_rfc822;
-  // $log->name = $xml->location . " at " . $xml->observation_time_rfc822;
-  // $log->done = 1;
-  // $log->timestamp = strtotime($xml->observation_time_rfc822);
-
-  /*
+  $log_wrapper = entity_metadata_wrapper('log', $log);
+  $log_wrapper->field_farm_notes->set($xml);
+  $log_wrapper->done = 1;
+  $log_wrapper->name = $xml->location . " at " . $xml->observation_time_rfc822;
+  $log_wrapper->timestamp = strtotime($xml->observation_time_rfc822);
+  $log_wrapper->save();
+  
+  
   $qty = entity_create('farm_quantity', array('type' => 'farm_quantity'));
   $qty->value = strval($xml->temp_f);
   $qty->units = 'Fahrenheit';
   entity_save('farm_quantity', $qty);
   
-  $log->field_farm_quantity = $qty;
-  */
+  // $etl = entity_load('log', array('102'));
+  // print_r($etl);
 
-  $etl = entity_load('log', array('102'));
-  print_r($etl);
-
-  print("Temperature " . $xml->temp_f . "\r\n");
+  // print("Temperature " . $xml->temp_f . "\r\n");
+  
+  
 
   watchdog('farmosnws', 'Temperature data saved from ' . $feedfilename, array(), WATCHDOG_INFO, NULL);
   
