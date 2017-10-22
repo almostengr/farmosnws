@@ -5,19 +5,55 @@
  * implements hook_install()
  */
 function farmosnws_install() {
-  // check for the Fahrenheit taxonomy type
-  $taxterm = taxonomy_get_term_by_name('Fahrenheit');
   
-  if (count($taxterm) == 0) {
-    $term = new stdClass();
-    $term->name = "Fahrenheit";
-    
-    $vocab = taxonomy_vocabulary_machine_name_load('Farm Quantity Units');
-    
-    $term->vid = $vocab->vid;
-    taxonomy_term_save($term);
+  // add the quantity types
+  
+  // get the vocabulary ID so that the terms can be properly associated
+  $vocab_qty_units = taxonomy_vocabulary_machine_name_load('farm_quantity_units');
+  
+  $terms_qty_list = array(
+  	'Fahrenheit',
+  	'Celsius',
+  	'Percent Humdity',
+  	'Direction',
+  	'Inches',
+  	'MPH',
+  	'Miles',
+  );
+  
+  // check if the term exists, if it does not then skip it
+  foreach($terms_qty_list as $term_qty_item) {
+  	$taxterm = taxonomy_get_term_by_name($term_qty_item, 'farm_quantity_units');
+  	
+  	if (count($taxterm) == 0) {
+   	  $tax_qty_term = new stdClass();
+   	  $tax_qty_term->name = $term_qty_item;
+   	  $tax_qty_term->vid = $vocab_qty_units->vid;
+   	  taxonomy_term_save($tax_qty_term);
+      
+      watchdog('farmosnws', 'Created ' . $term_item . ' taxonomy term.', array(), WATCHDOG_INFO, NULL);
+  	}
   }
- 
+  
+  // add the observation types
+  
+  $vocab_observ_types = taxonomy_vocabulary_machine_name_load('farm_observation_types');
+  $terms_observ_list = array('Temperature');
+  
+  foreach($terms_observ_list as $term_observ_item) {
+  	$tax_observ_term = taxonomy_get_term_by_name($$term_observ_item, 'farm_observation_types');
+  	
+  	if (count($tax_observ_term) == 0){
+  	  $tax_observ_new = new stdClass();
+  	  $tax_observ_new->name = $term_observ_item;
+  	  $tax_observ_new->vid = $vocab_observ_types->vid;
+  	  taxonomy_term_save($tax_observ_new);
+  	}
+  }
+  
+  // set the default units to use
+  variable_set('farmosnws_temp_units', 'us');
+		
   watchdog('farmosnws', 'FarmOS NWS module has been installed.', array(), WATCHDOG_INFO, NULL);
 }
 
