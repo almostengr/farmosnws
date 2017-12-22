@@ -53,6 +53,7 @@ function farmosnws_install() {
   
   // set the default units to use
   variable_set('farmosnws_temp_units', 'us');
+  variable_set('farmosnws_del_process_feed', 'No');
 		
   watchdog('farmosnws', 'FarmOS NWS module has been installed.', array(), WATCHDOG_INFO, NULL);
 }
@@ -83,3 +84,4 @@ function farmosnws_uninstall() {
 
   watchdog('farmosnws', 'FarmOS NWS module has been uninstalled.', array(), WATCHDOG_INFO, NULL);
 } // end function
+
