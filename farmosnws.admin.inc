@@ -34,7 +34,18 @@ function farmosnws_admin_form() {
       'metric' => t('Celsius'),
     ),
     '#description' => t('Select the system of measurement that you would like to use.'),
-  	'#default_value' => variable_get('farmosnws_temp_units'),
+    '#default_value' => variable_get('farmosnws_temp_units'),
+  );
+  $form['farmosnws_delete_xml'] = array(
+    '#type' => 'select',
+    '#title' => t('Delete Processed XML'),
+    '#required' => TRUE,
+    '#options' => array(
+      'Yes',
+      'No',
+    ),
+    '#description' => t('Delete the National Weather Service XML feed after it has been processed.'),
+    '#default_value' => variable_get('farmosnws_delete_xml', 'Yes'),
   );
   
   return system_settings_form($form);
