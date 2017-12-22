@@ -111,7 +111,8 @@ function farmosnws_get_xml() {
         file_put_contents($weather_feed_name, $response->data);
         watchdog('farmosnws', 'Weather data saved to ' . $weather_feed_name, array(), WATCHDOG_INFO, NULL);
         
-        farmosnws_load_xml($weather_feed_name);
+        // farmosnws_load_xml($weather_feed_name);
+        // farmosnws_split_xml($weather_feed_name);
       }
       else {
         drupal_set_message("Feed could not be downloaded because the directory does not exist. Please verify that Drupal has write access and try again.", 'error', FALSE);
@@ -120,6 +121,17 @@ function farmosnws_get_xml() {
     } // end else
   } // end foreach
 } // end function
+
+/**
+ *
+ * @feedfilename string File name that will be split into smaller feeds
+ * 
+ */
+function farmosnws_split_xml($feedfilename) {
+  $xml = simplexml_load_file($feedfilename);
+
+  
+}
 
 /**
  * 
@@ -142,8 +154,10 @@ function farmosnws_load_xml($feedfilename) {
   
   $log = entity_create('log', array('type' => 'farm_observation'));
   $log_wrapper = entity_metadata_wrapper('log', $log);
-  $log_wrapper->field_farm_notes->set($xml->temp_c);
-  $log_wrapper->field_farm_quantity = intval($xml->temp_f);
+  print "Temp F: " . $xml->temp_f . "\r\n";
+  $log_wrapper->field_farm_notes = $xml->temp_f;
+  print "Temp F int: " . intval($xml->temp_f);
+  $log_wrapper->field_farm_quantity->value = intval($xml->temp_f);
   $log_wrapper->done = 1;
   $log_wrapper->name = $xml->location . " at " . $xml->observation_time_rfc822;
   $log_wrapper->timestamp = strtotime($xml->observation_time_rfc822);
