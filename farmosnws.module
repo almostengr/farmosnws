@@ -21,7 +21,8 @@ function farmosnws_menu() {
     'access arguments' => array('access administration pages'),
   	'file' => 'farmosnws.admin.inc',
   );
-    
+   
+  // TO DO: Have URL that will allow for non-cron processing of data 
   return $items;
 }
 
@@ -32,6 +33,7 @@ function farmosnws_menu() {
 function farmosnws_cron() {
   farmosnws_get_xml();
   // farmosnws_load_xml();
+  // farmosnws_convert_xml_2_csv();
 }
 
 /**
@@ -112,7 +114,7 @@ function farmosnws_get_xml() {
         watchdog('farmosnws', 'Weather data saved to ' . $weather_feed_name, array(), WATCHDOG_INFO, NULL);
         
         // farmosnws_load_xml($weather_feed_name);
-        // farmosnws_split_xml($weather_feed_name);
+        // farmosnws_convert_xml_2_csv($weather_feed_name);
       }
       else {
         drupal_set_message("Feed could not be downloaded because the directory does not exist. Please verify that Drupal has write access and try again.", 'error', FALSE);
@@ -128,6 +130,7 @@ function farmosnws_get_xml() {
  * 
  */
 function farmosnws_convert_xml_2_csv($feedfilename) {
+// function farmosnws_convert_xml_2_csv() {
   // read the files in the unprocessed directory
   // $rawfiles = scandir('filename');
   $csvfilename = $feedfilename . '.csv';
@@ -251,7 +254,7 @@ function farmosnws_convert_xml_2_csv($feedfilename) {
     fclose($csvfile);
     
     // remove feed file
-    if ( variable_get('farmosnws_del_process_feed', 'n') == "y" ) {
+    if ( variable_get('farmosnws_del_process_feed', "No") == "Yes" ) {
       $removefeed = unlink($feedfilename);
       if ($removefeed == FALSE){
         throw new Exception("Unable to remove XML feed file " . $feedfilename);
