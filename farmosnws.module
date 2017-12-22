@@ -21,7 +21,7 @@ function farmosnws_menu() {
     'access arguments' => array('access administration pages'),
   	'file' => 'farmosnws.admin.inc',
   );
-  
+    
   return $items;
 }
 
@@ -30,41 +30,8 @@ function farmosnws_menu() {
  * Implements hook_cron()
  */
 function farmosnws_cron() {
-  /*
-  $pullfeed = farmosnws_get_new_feed();
-  
-  if ($pullfeed == TRUE) {
-    farmosnws_get_xml();
-    variable_set('farmosnws_cron_last', REQUEST_TIME);
-  }
-  else {
-    watchdog('farmosnws', 'Skipping pulling weather feed.', array(), WATCHDOG_INFO, NULL);
-  }
-  */
-  
   farmosnws_get_xml();
-  variable_set('farmosnws_cron_last', REQUEST_TIME);
-}
-
-/**
- *
- * Determine whether to pull the data feed from the NWS based on when cron was last run
- * 
- * @return
- *   Returns whether the feed should be pulled or not.
- */
-function farmosnws_feed_limiter() {
-  $cron_last = variable_get('farmosnws_cron_last', 0);
-  $time_diff = REQUEST_TIME - $cron_last;
-  
-  // if the feed was last pulled over an hour ago, then set value to true.
-  if ($time_diff >= 3600) {
-    $returnval = TRUE;
-  }
-  else {
-    $returnval = FALSE;
-  }
-  return $returnval;
+  // farmosnws_load_xml();
 }
 
 /**
@@ -108,7 +75,6 @@ function farmosnws_get_xml() {
   
   $locations = variable_get('farmosnws_locations', '');
   $location_array = explode(",", $locations);
-  $location_count = count($location_array);
   
   foreach ($location_array as $loc) {
     // remove carriage returns and new lines
@@ -131,25 +97,25 @@ function farmosnws_get_xml() {
     // if error occurs when performing the request
     if ( $response->error ) {
       watchdog('farmosnws', 'Response code: ' . $response->code . '. ' . $response->error, array(), WATCHDOG_ERROR, NULL);
-      // drupal_set_message($response->error, 'error', FALSE);
+      drupal_set_message($response->error, 'error', FALSE);
     }
-    // if no errors occur when performing the request
     else{
+      // if no errors occur when performing the request
       watchdog('farmosnws', 'Response code: ' . $response->code, array(), WATCHDOG_INFO, NULL);
 
       // if the directory doesnt exist, then create it with 755 permissions
       $direxist = farmosnws_create_feed_dir($weatherfeedsdir);
       
-      if ( $direxist == FALSE ) {
-        drupal_set_message("Feed could not be downloaded because the directory does not exist. Please verify that Drupal has write access and try again.", 'error', FALSE);
-        watchdog('farmosnws', 'Feed could not be downloaded because the directory does not exist.', array(), WATCHDOG_ERROR, NULL);
-      } // end if
-      else {
+      if ( $direxist == TRUE ) {
         // save the contents retrieved
         file_put_contents($weather_feed_name, $response->data);
         watchdog('farmosnws', 'Weather data saved to ' . $weather_feed_name, array(), WATCHDOG_INFO, NULL);
-
-        farmosnws_save_feed_data($weather_feed_name);
+        
+        farmosnws_load_xml($weather_feed_name);
+      }
+      else {
+        drupal_set_message("Feed could not be downloaded because the directory does not exist. Please verify that Drupal has write access and try again.", 'error', FALSE);
+        watchdog('farmosnws', 'Feed could not be downloaded because the directory does not exist.', array(), WATCHDOG_ERROR, NULL);
       }
     } // end else
   } // end foreach
@@ -162,16 +128,18 @@ function farmosnws_get_xml() {
  * @tutorial http://audiblecode.com/blog/programmatically-create-and-update-field-collection-item-node-entity-api
  * @tutorial http://drupal.org/node/1842304
  */
-function farmosnws_save_feed_data($feedfilename) {
+function farmosnws_load_xml($feedfilename) {
   global $user;
 
   // load the file
   $xml = simplexml_load_file($feedfilename);
   
+  /*
   $qty = entity_create('farm_quantity', array('type' => 'farm_quantity'));
   $qty->value = $xml->temp_f;
   entity_save('farm_quantity', $qty);
-
+*/
+  
   $log = entity_create('log', array('type' => 'farm_observation'));
   $log_wrapper = entity_metadata_wrapper('log', $log);
   $log_wrapper->field_farm_notes->set($xml);
@@ -179,11 +147,11 @@ function farmosnws_save_feed_data($feedfilename) {
   $log_wrapper->name = $xml->location . " at " . $xml->observation_time_rfc822;
   $log_wrapper->timestamp = strtotime($xml->observation_time_rfc822);
   $log_wrapper->save();
-  
-  
+   
   $qty = entity_create('farm_quantity', array('type' => 'farm_quantity'));
   $qty->value = strval($xml->temp_f);
   $qty->units = 'Fahrenheit';
+  $qty->id = $log_wrapper->id;
   entity_save('farm_quantity', $qty);
   
   // $etl = entity_load('log', array('102'));
@@ -191,8 +159,6 @@ function farmosnws_save_feed_data($feedfilename) {
 
   // print("Temperature " . $xml->temp_f . "\r\n");
   
-  
-
   watchdog('farmosnws', 'Temperature data saved from ' . $feedfilename, array(), WATCHDOG_INFO, NULL);
   
   // log the relative humidity

@@ -49,10 +49,7 @@ function farmosnws_admin_form_validate($form, &$form_state) {
   
   $direxist = farmosnws_create_feed_dir($weatherfeedsdir);
   if ( $direxist == FALSE ){
-    watchdog('farmosnws', 'Unable to create the weather feed directory.', array(), WATCHDOG_ERROR, NULL);
+    // watchdog('farmosnws', 'Unable to create the weather feed directory.', array(), WATCHDOG_ERROR, NULL);
     form_set_error('farmosnws_weather_feeds_dir', 'The weather feed directory cannot be created. Please verify that Drupal as write permissions and try again.');
   }
-  else {
-    // watchdog('farmosnws', 'Created weather feed directory.', array(), WATCHDOG_INFO, NULL);
-  } // end if
 } // end if
