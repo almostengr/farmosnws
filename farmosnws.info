@@ -2,7 +2,7 @@ name = FarmOS NWS
 description = Imports data from the National Weather Service into Drupal for use by FarmOS.
 core = 7.x
 package = farmOS
-version = 7.x-2.0-beta5
+version = 7.x-2.0-beta6
 dependencies[] = farm_quantity
 dependencies[] = farm_log_observation
 
