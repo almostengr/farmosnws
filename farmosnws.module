@@ -127,10 +127,141 @@ function farmosnws_get_xml() {
  * @feedfilename string File name that will be split into smaller feeds
  * 
  */
-function farmosnws_split_xml($feedfilename) {
-  $xml = simplexml_load_file($feedfilename);
-
+function farmosnws_convert_xml_2_csv($feedfilename) {
+  // read the files in the unprocessed directory
+  // $rawfiles = scandir('filename');
+  $csvfilename = $feedfilename . '.csv';
   
+  try{
+    $csvfile = fopen($feedfilename, "w");
+    
+    if ($csvfile === FALSE) {
+      throw new Exception("Could open CSV file writing");
+    }
+    
+    // write header
+    fputcsv($csvfile, array("Done", "Date", "Name", "Notes", "Categories", "Quantity value", "Quantity unit"));
+    
+    // load the xml file
+    $xml = simplexml_load_file($filename);
+  
+    if ( variable_get('farmosnws_temp_units','') == 'metric' ){
+      // temperature in C
+      fputcsv($csvfile,
+          array("1",
+              $xml->observation_time_rfc822,
+              $xml->location . ' Temperature', // name
+              $xml->location,
+              "Temperature",
+              $xml->temp_c,
+              "Celsius",
+          ));
+      
+      // log the barametric pressure
+      fputcsv($csvfile,
+          array("1",
+              $xml->observation_time_rfc822,
+              $xml->location . ' Barometric Pressure', // name
+              $xml->location,
+              "Pressure",
+              $xml->pressure_mb,
+              "Millibars",
+          ));
+    }
+    else{
+      // temperature in F
+      fputcsv($csvfile,
+          array("1",
+              $xml->observation_time_rfc822,
+              $xml->location . ' Temperature', // name
+              $xml->location,
+              "Temperature",
+              $xml->temp_f,
+              "Fahrenheit",
+          ));
+      
+      // log the barametric pressure
+      fputcsv($csvfile,
+          array("1",
+              $xml->observation_time_rfc822,
+              $xml->location . ' Barometric Pressure', // name
+              $xml->location,
+              "Pressure",
+              $xml->pressure_in,
+              "Inches",
+          ));
+    }
+    
+    // log the relative humidity
+    fputcsv($csvfile,
+        array("1",
+            $xml->observation_time_rfc822,
+            $xml->location . ' Humidity', // name
+            $xml->location,
+            "Humidity",
+            $xml->relative_humidity,
+            "Humidity",
+        ));
+    
+    // log the wind speed
+    fputcsv($csvfile,
+        array("1",
+            $xml->observation_time_rfc822,
+            $xml->location . ' Wind Speed', // name
+            $xml->location,
+            "Wind",
+            $xml->wind_mph,
+            "MPH",
+        ));
+    
+    // log the wind direction
+    fputcsv($csvfile,
+        array("1",
+            $xml->observation_time_rfc822,
+            $xml->location . ' Wind Direction', // name
+            $xml->location,
+            "Wind",
+            $xml->wind_dir,
+            "Direction",
+        ));
+    
+    // log the weather string
+    fputcsv($csvfile,
+        array("1",
+            $xml->observation_time_rfc822,
+            $xml->location . ' Weather', // name
+            $xml->location,
+            "Weather",
+            $xml->weather,
+            "Weather",
+        ));
+    
+    // log the visibility
+    fputcsv($csvfile,
+        array("1",
+            $xml->observation_time_rfc822,
+            $xml->location . ' Visibility', // name
+            $xml->location,
+            "Visibility",
+            $xml->visibility_mi,
+            "Miles",
+        ));
+  
+    // close the file
+    fclose($csvfile);
+    
+    // remove feed file
+    if ( variable_get('farmosnws_del_process_feed', 'n') == "y" ) {
+      $removefeed = unlink($feedfilename);
+      if ($removefeed == FALSE){
+        throw new Exception("Unable to remove XML feed file " . $feedfilename);
+      }
+    }
+  }
+  catch(Exception $e) {
+    watchdog('farmosnws', $e->getMessage(), array(), WATCHDOG_ERROR, NULL);
+    drupal_set_message($e->getMessage(), 'error');
+  }
 }
 
 /**
