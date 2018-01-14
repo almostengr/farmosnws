@@ -21,26 +21,19 @@ function farmosnws_importer_feeds_importer_default() {
       'plugin_key' => 'feeds_fetcher_directory_fetcher',
       'config' => array(
         'recursive' => 1,
-        'directory' => 'public://feeds/curweather',
-        'filemask' => '/\\.xml$/',
+        'directory' => 'public://nwsfeeds',
+        'filemask' => '/\\.csv$/',
         'updated_files' => 0,
         'after_processed' => '0',
         'move_to_folder' => '',
       ),
     ),
     'parser' => array(
-      'plugin_key' => 'FeedsXPathParserXML',
+      'plugin_key' => 'FeedsCSVParser',
       'config' => array(
-        'sources' => array(),
-        'rawXML' => array(),
-        'context' => '',
-        'exp' => array(
-          'errors' => FALSE,
-          'tidy' => FALSE,
-          'debug' => array(),
-          'tidy_encoding' => 'UTF8',
-        ),
-        'allow_override' => TRUE,
+        'delimiter' => ',',
+        'encoding' => 'ASCII',
+        'no_headers' => 0,
       ),
     ),
     'processor' => array(
@@ -50,9 +43,40 @@ function farmosnws_importer_feeds_importer_default() {
         'authorize' => 0,
         'mappings' => array(
           0 => array(
-            'source' => 'xpathparser:0',
+            'source' => 'Done',
+            'target' => 'done',
+            'unique' => FALSE,
+            'language' => 'und',
+          ),
+          1 => array(
+            'source' => 'Date',
+            'target' => 'timestamp',
+            'unique' => FALSE,
+            'language' => 'und',
+          ),
+          2 => array(
+            'source' => 'Name',
+            'target' => 'name',
+            'unique' => FALSE,
+            'language' => 'und',
+          ),
+          3 => array(
+            'source' => 'Notes',
+            'target' => 'field_farm_notes',
+            'unique' => FALSE,
+            'language' => 'und',
+          ),
+          4 => array(
+            'source' => 'Value',
             'target' => 'field_farm_quantity:field_farm_quantity_value',
             'unique' => FALSE,
+            'language' => 'und',
+          ),
+          5 => array(
+            'source' => 'Unit',
+            'target' => 'field_farm_quantity:field_farm_quantity_units',
+            'unique' => FALSE,
+            'language' => 'und',
           ),
         ),
         'insert_new' => '1',
@@ -66,10 +90,10 @@ function farmosnws_importer_feeds_importer_default() {
     ),
     'content_type' => '',
     'update' => 0,
-    'import_period' => '1800',
+    'import_period' => '0',
     'expire_period' => 3600,
     'import_on_create' => 1,
-    'process_in_background' => 1,
+    'process_in_background' => 0,
   );
   $export['log_nws_observation'] = $feeds_importer;
 
