@@ -31,6 +31,10 @@ function farmosnws_install() {
       watchdog('farmosnws', 'Matched taxonomy term ' . $term_qty_item, array(), WATCHDOG_INFO, NULL);
     }
   }
+
+  // set default variable values
+  variable_set('farmosnws_temp_units', 'us');
+  variable_set('farmosnws_delete_xml', 'yes');
 }
 
 /**
@@ -39,7 +43,8 @@ function farmosnws_install() {
  */
 function farmosnws_enable() {
   // notice to visit configuration page to set initial values for variables
-  drupal_set_message(t("Visit the module " . l("configuration page", 'admin/config/services/farmosnws') . " to complete module setup."), 'warning', FALSE);	
+  drupal_set_message(t("Visit the module " . l("configuration page", 'admin/config/services/farmosnws') . " to complete module setup."), 'warning', FALSE);
+  watchdog('farmosnws', 'Visit the module configuration page to complete module setup', array(), WATCHDOG_INFO, NULL);
 }
 
 /**
@@ -57,6 +62,6 @@ function farmosnws_uninstall() {
   
   menu_rebuild();
 
-  watchdog('farmosnws', 'FarmOS NWS module has been uninstalled.', array(), WATCHDOG_INFO, NULL);
+  watchdog('farmosnws', 'FarmOS NWS module has been uninstalled', array(), WATCHDOG_INFO, NULL);
 } // end function
 
