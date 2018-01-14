@@ -50,7 +50,7 @@ function farmosnws_create_feed_dir($feedpath) {
   
   // check to see if the feeds directory exists. If not attempt to create it.
   if ( is_dir($feedpath) == FALSE ) {
-    $mkdirsuccess = mkdir($weatherfeedsdir, 755);
+    $mkdirsuccess = mkdir($feedpath, 755);
     
     // verify directory exists
     if ( $feedpath == FALSE ){
@@ -114,7 +114,7 @@ function farmosnws_get_xml() {
         watchdog('farmosnws', 'Weather data saved to ' . $weather_feed_name, array(), WATCHDOG_INFO, NULL);
         
         // farmosnws_load_xml($weather_feed_name);
-        // farmosnws_convert_xml_2_csv($weather_feed_name);
+        farmosnws_convert_xml_2_csv($weather_feed_name);
       }
       else {
         drupal_set_message("Feed could not be downloaded because the directory does not exist. Please verify that Drupal has write access and try again.", 'error', FALSE);
@@ -136,7 +136,7 @@ function farmosnws_convert_xml_2_csv($feedfilename) {
   $csvfilename = $feedfilename . '.csv';
   
   try{
-    $csvfile = fopen($feedfilename, "w");
+    $csvfile = fopen($csvfilename, "w");
     
     if ($csvfile === FALSE) {
       throw new Exception("Could open CSV file writing");
@@ -146,7 +146,7 @@ function farmosnws_convert_xml_2_csv($feedfilename) {
     fputcsv($csvfile, array("Done", "Date", "Name", "Notes", "Categories", "Quantity value", "Quantity unit"));
     
     // load the xml file
-    $xml = simplexml_load_file($filename);
+    $xml = simplexml_load_file($feedfilename);
   
     if ( variable_get('farmosnws_temp_units','') == 'metric' ){
       // temperature in C
