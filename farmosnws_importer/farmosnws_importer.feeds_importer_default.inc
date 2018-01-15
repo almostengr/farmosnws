@@ -49,34 +49,51 @@ function farmosnws_importer_feeds_importer_default() {
             'language' => 'und',
           ),
           1 => array(
-            'source' => 'Date',
-            'target' => 'timestamp',
-            'unique' => FALSE,
-            'language' => 'und',
-          ),
-          2 => array(
             'source' => 'Name',
             'target' => 'name',
             'unique' => FALSE,
             'language' => 'und',
           ),
-          3 => array(
+          2 => array(
             'source' => 'Notes',
             'target' => 'field_farm_notes',
             'unique' => FALSE,
             'language' => 'und',
           ),
-          4 => array(
+          3 => array(
             'source' => 'Value',
             'target' => 'field_farm_quantity:field_farm_quantity_value',
             'unique' => FALSE,
             'language' => 'und',
           ),
-          5 => array(
+          4 => array(
             'source' => 'Unit',
             'target' => 'field_farm_quantity:field_farm_quantity_units',
             'unique' => FALSE,
             'language' => 'und',
+          ),
+          5 => array(
+            'source' => 'Date',
+            'target' => 'changed',
+            'unique' => FALSE,
+            'language' => 'und',
+          ),
+          6 => array(
+            'source' => 'Date',
+            'target' => 'created',
+            'unique' => FALSE,
+            'language' => 'und',
+          ),
+          7 => array(
+            'source' => 'Latitude',
+            'target' => 'field_farm_geofield:lat',
+            'unique' => FALSE,
+            'language' => 'und',
+          ),
+          8 => array(
+            'source' => 'Longitude',
+            'target' => 'field_farm_geofield:lon',
+            'unique' => FALSE,
           ),
         ),
         'insert_new' => '1',
