@@ -32,8 +32,6 @@ function farmosnws_menu() {
  */
 function farmosnws_cron() {
   farmosnws_get_xml();
-  // farmosnws_load_xml();
-  // farmosnws_convert_xml_2_csv();
 }
 
 /**
@@ -74,6 +72,8 @@ function farmosnws_create_feed_dir($feedpath) {
  */
 function farmosnws_get_xml() {
   $weatherfeedsdir = variable_get('farmosnws_weather_feeds_dir');
+
+  // $weatherfeedsdir = file_create_url($weatherfeedsdir);
   
   $locations = variable_get('farmosnws_locations', '');
   $location_array = explode(",", $locations);
@@ -91,10 +91,6 @@ function farmosnws_get_xml() {
     watchdog('farmosnws', 'Getting weather data for ' . $loc, array(), WATCHDOG_INFO, NULL);
     
     $response = drupal_http_request($url, array());
-    
-//     watchdog('farmosnws', 'Response code: ' . $response->code, array(), WATCHDOG_INFO, NULL);
-
- // watchdog('farmosnws', 'Response code: ' . $response->code . '. '  $response->error, array(), WATCHDOG_ERROR, NULL);
     
     // if error occurs when performing the request
     if ( $response->error ) {
@@ -130,7 +126,6 @@ function farmosnws_get_xml() {
  * 
  */
 function farmosnws_convert_xml_2_csv($feedfilename) {
-// function farmosnws_convert_xml_2_csv() {
   // read the files in the unprocessed directory
   // $rawfiles = scandir('filename');
   $csvfilename = $feedfilename . '.csv';
@@ -141,58 +136,71 @@ function farmosnws_convert_xml_2_csv($feedfilename) {
     if ($csvfile === FALSE) {
       throw new Exception("Could open CSV file writing");
     }
+ 
+    // get taxonomy term ids
+    $term_celsius = taxonomy_get_term_by_name("Celsius");
+    $term_millibars = taxonomy_get_term_by_name("Millibars");
+    $term_fahrenheit = taxonomy_get_term_by_name("Fahrenheit");
+    $term_inches = taxonomy_get_term_by_name("Inches");
+    $term_inches = taxonomy_get_term_by_name("Humidity");
     
     // write header
-    fputcsv($csvfile, array("Done", "Date", "Name", "Notes", "Categories", "Quantity value", "Quantity unit"));
+    fputcsv($csvfile, array("Done", "Date", "Name", "Notes", "Value", "Unit"));
     
     // load the xml file
     $xml = simplexml_load_file($feedfilename);
+
+    // load the units configuration
+    $measure_units = variable_get('farmosnws_temp_units', 'us');
   
-    if ( variable_get('farmosnws_temp_units','') == 'metric' ){
+    // log the metric units
+    if ( $measure_units == 'metric' || $measure_units == 'both' ){
       // temperature in C
       fputcsv($csvfile,
-          array("1",
-              $xml->observation_time_rfc822,
+          array(1, // done
+              $xml->observation_time_rfc822, // date
               $xml->location . ' Temperature', // name
-              $xml->location,
-              "Temperature",
-              $xml->temp_c,
-              "Celsius",
-          ));
+              $xml->location, // location
+              // "Temperature", // category
+              $xml->temp_c, // value
+              "Celsius", // unit
+          ), ',');
       
       // log the barametric pressure
       fputcsv($csvfile,
-          array("1",
-              $xml->observation_time_rfc822,
+          array(1, // done
+              $xml->observation_time_rfc822, // date
               $xml->location . ' Barometric Pressure', // name
-              $xml->location,
-              "Pressure",
+              $notes, // notes
+              // "Pressure",
               $xml->pressure_mb,
               "Millibars",
-          ));
+          ), ',');
     }
-    else{
+    
+    // log the US, standard units
+    if ( $measure_units == 'us' || $measure_units == 'both' ){
       // temperature in F
       fputcsv($csvfile,
-          array("1",
+          array(1,
               $xml->observation_time_rfc822,
               $xml->location . ' Temperature', // name
               $xml->location,
-              "Temperature",
+              // "Temperature",
               $xml->temp_f,
               "Fahrenheit",
-          ));
+          ), ',');
       
       // log the barametric pressure
       fputcsv($csvfile,
-          array("1",
+          array(1,
               $xml->observation_time_rfc822,
               $xml->location . ' Barometric Pressure', // name
               $xml->location,
-              "Pressure",
+              // "Pressure",
               $xml->pressure_in,
               "Inches",
-          ));
+          ), ',');
     }
     
     // log the relative humidity
@@ -201,10 +209,10 @@ function farmosnws_convert_xml_2_csv($feedfilename) {
             $xml->observation_time_rfc822,
             $xml->location . ' Humidity', // name
             $xml->location,
-            "Humidity",
+            // "Humidity",
             $xml->relative_humidity,
-            "Humidity",
-        ));
+            "Percent Humidity",
+        ), ',');
     
     // log the wind speed
     fputcsv($csvfile,
@@ -212,10 +220,10 @@ function farmosnws_convert_xml_2_csv($feedfilename) {
             $xml->observation_time_rfc822,
             $xml->location . ' Wind Speed', // name
             $xml->location,
-            "Wind",
+            // "Wind",
             $xml->wind_mph,
             "MPH",
-        ));
+        ), ',');
     
     // log the wind direction
     fputcsv($csvfile,
@@ -223,21 +231,21 @@ function farmosnws_convert_xml_2_csv($feedfilename) {
             $xml->observation_time_rfc822,
             $xml->location . ' Wind Direction', // name
             $xml->location,
-            "Wind",
-            $xml->wind_dir,
+            // "Wind",
+            $xml->wind_degrees,
             "Direction",
-        ));
+        ), ',');
     
     // log the weather string
     fputcsv($csvfile,
         array("1",
             $xml->observation_time_rfc822,
             $xml->location . ' Weather', // name
-            $xml->location,
-            "Weather",
-            $xml->weather,
-            "Weather",
-        ));
+            $xml->weather, // $xml->location . ' ' . $xml->observation_time_rfc822,
+            // "Weather",
+            "", // $xml->weather,
+            "",
+        ), ',');
     
     // log the visibility
     fputcsv($csvfile,
@@ -245,16 +253,16 @@ function farmosnws_convert_xml_2_csv($feedfilename) {
             $xml->observation_time_rfc822,
             $xml->location . ' Visibility', // name
             $xml->location,
-            "Visibility",
+            // "Visibility",
             $xml->visibility_mi,
             "Miles",
-        ));
+        ), ',');
   
     // close the file
     fclose($csvfile);
     
     // remove feed file
-    if ( variable_get('farmosnws_del_process_feed', "No") == "Yes" ) {
+    if ( variable_get('farmosnws_del_process_feed', "no") == "yes" ) {
       $removefeed = unlink($feedfilename);
       if ($removefeed == FALSE){
         throw new Exception("Unable to remove XML feed file " . $feedfilename);
@@ -265,59 +273,5 @@ function farmosnws_convert_xml_2_csv($feedfilename) {
     watchdog('farmosnws', $e->getMessage(), array(), WATCHDOG_ERROR, NULL);
     drupal_set_message($e->getMessage(), 'error');
   }
-}
-
-/**
- * 
- * @param unknown $feedfilename
- * 
- * @tutorial http://audiblecode.com/blog/programmatically-create-and-update-field-collection-item-node-entity-api
- * @tutorial http://drupal.org/node/1842304
- */
-function farmosnws_load_xml($feedfilename) {
-  global $user;
-
-  // load the file
-  $xml = simplexml_load_file($feedfilename);
-  
-  /*
-  $qty = entity_create('farm_quantity', array('type' => 'farm_quantity'));
-  $qty->value = $xml->temp_f;
-  entity_save('farm_quantity', $qty);
-*/
-  
-  $log = entity_create('log', array('type' => 'farm_observation'));
-  $log_wrapper = entity_metadata_wrapper('log', $log);
-  print "Temp F: " . $xml->temp_f . "\r\n";
-  $log_wrapper->field_farm_notes = $xml->temp_f;
-  print "Temp F int: " . intval($xml->temp_f);
-  $log_wrapper->field_farm_quantity->value = intval($xml->temp_f);
-  $log_wrapper->done = 1;
-  $log_wrapper->name = $xml->location . " at " . $xml->observation_time_rfc822;
-  $log_wrapper->timestamp = strtotime($xml->observation_time_rfc822);
-  $log_wrapper->save();
-   
-  $qty = entity_create('farm_quantity', array('type' => 'farm_quantity'));
-  $qty->value = strval($xml->temp_f);
-  $qty->units = 'Fahrenheit';
-  $qty->id = $log_wrapper->id;
-  entity_save('farm_quantity', $qty);
-  
-  // $etl = entity_load('log', array('102'));
-  // print_r($etl);
-
-  // print("Temperature " . $xml->temp_f . "\r\n");
-  
-  watchdog('farmosnws', 'Temperature data saved from ' . $feedfilename, array(), WATCHDOG_INFO, NULL);
-  
-  // log the relative humidity
-    
-  // log the wind speed
-  
-  // log the wind direction
- 
-  // log the barametric pressure
-  
-  // log the visibility
 }
 
