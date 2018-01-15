@@ -73,6 +73,7 @@ function farmosnws_create_feed_dir($feedpath) {
 function farmosnws_get_xml() {
   $weatherfeedsdir = variable_get('farmosnws_weather_feeds_dir');
 
+  // TO DO: Add converter for schema to actual path
   // $weatherfeedsdir = file_create_url($weatherfeedsdir);
   
   $locations = variable_get('farmosnws_locations', '');
@@ -81,13 +82,12 @@ function farmosnws_get_xml() {
   foreach ($location_array as $loc) {
     // remove carriage returns and new lines
     $loc = str_replace(" ", "", str_replace("\r", "", str_replace("\n", "", $loc)));
-    // $loc = str_replace(" ", "", $loc);
 
+    // build URL to connect to NWS
     $weather_feed_name = $weatherfeedsdir . '/' . uniqid($loc, FALSE) . '.xml';
     $url = "http://w1.weather.gov/xml/current_obs/" . $loc . ".xml";
   
     watchdog('farmosnws', $url, array(), WATCHDOG_DEBUG, NULL);
-    
     watchdog('farmosnws', 'Getting weather data for ' . $loc, array(), WATCHDOG_INFO, NULL);
     
     $response = drupal_http_request($url, array());
@@ -109,7 +109,6 @@ function farmosnws_get_xml() {
         file_put_contents($weather_feed_name, $response->data);
         watchdog('farmosnws', 'Weather data saved to ' . $weather_feed_name, array(), WATCHDOG_INFO, NULL);
         
-        // farmosnws_load_xml($weather_feed_name);
         farmosnws_convert_xml_2_csv($weather_feed_name);
       }
       else {
@@ -123,11 +122,9 @@ function farmosnws_get_xml() {
 /**
  *
  * @feedfilename string File name that will be split into smaller feeds
- * 
  */
 function farmosnws_convert_xml_2_csv($feedfilename) {
   // read the files in the unprocessed directory
-  // $rawfiles = scandir('filename');
   $csvfilename = $feedfilename . '.csv';
   
   try{
@@ -274,4 +271,5 @@ function farmosnws_convert_xml_2_csv($feedfilename) {
     drupal_set_message($e->getMessage(), 'error');
   }
 }
+
 

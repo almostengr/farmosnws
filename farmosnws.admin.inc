@@ -46,7 +46,7 @@ function farmosnws_admin_form() {
       'no' => 'No',
     ),
     '#description' => t('Delete the National Weather Service XML feed after it has been processed.'),
-    '#default_value' => variable_get('farmosnws_delete_xml', 'Yes'),
+    '#default_value' => variable_get('farmosnws_delete_xml', 'yes'),
   );
   
   return system_settings_form($form);
@@ -57,11 +57,11 @@ function farmosnws_admin_form() {
  * Validate the module settings
  */
 function farmosnws_admin_form_validate($form, &$form_state) {
+  // validate that the work directory exists and can be created
   $weatherfeedsdir = $form_state['values']['farmosnws_weather_feeds_dir'];
   
   $direxist = farmosnws_create_feed_dir($weatherfeedsdir);
   if ( $direxist == FALSE ){
-    // watchdog('farmosnws', 'Unable to create the weather feed directory.', array(), WATCHDOG_ERROR, NULL);
     form_set_error('farmosnws_weather_feeds_dir', 'The weather feed directory cannot be created. Please verify that Drupal as write permissions and try again.');
   }
 } // end if
