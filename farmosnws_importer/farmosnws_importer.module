@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the FarmOS NWS Feeds Importer feature.
+ */
+
+include_once 'farmosnws_importer.features.inc';

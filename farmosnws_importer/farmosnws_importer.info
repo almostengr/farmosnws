@@ -1,0 +1,16 @@
+name = FarmOS NWS Feeds Importer
+description = Import National Weather Service (NWS) data into FarmOS.
+core = 7.x
+package = farmOS
+version = 7.x-2.0
+dependencies[] = ctools
+dependencies[] = farm_log
+dependencies[] = farm_log_observation
+dependencies[] = feeds
+dependencies[] = feeds_fetcher_directory
+dependencies[] = feeds_xpathparser
+dependencies[] = log
+features[ctools][] = feeds:feeds_importer_default:1
+features[features_api][] = api:2
+features[feeds_importer][] = log_nws_observation
+project path = sites/all/modules/custom/farmosnws

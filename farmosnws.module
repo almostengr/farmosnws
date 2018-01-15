@@ -1,0 +1,275 @@
+<?php
+/**
+ * @file
+ * Code for the FarmOS NWS feature.
+ */
+
+/**
+ *
+ * Implements hook_menu()
+ * 
+ * @return Array of menu links
+ */
+function farmosnws_menu() {
+  $items = array();
+  
+  $items['admin/config/services/farmosnws'] = array(
+    'title' => t('FarmOS NWS Settings'),
+    'description' => 'Add and remove additional feeds to be pulled by FarmOS NWS',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('farmosnws_admin_form'),
+    'access arguments' => array('access administration pages'),
+  	'file' => 'farmosnws.admin.inc',
+  );
+   
+  // TO DO: Have URL that will allow for non-cron processing of data 
+  return $items;
+}
+
+/**
+ *
+ * Implements hook_cron()
+ */
+function farmosnws_cron() {
+  farmosnws_get_xml();
+}
+
+/**
+ *
+ * Check and create if necessary the path where the weather feeds will be stored.
+ * 
+ * @param string feedpath
+ *   String to the path that contains the feeds 
+ *   
+ * @return Returns whether the directory exists or not.
+ */
+function farmosnws_create_feed_dir($feedpath) {
+  $mkdirsuccess = NULL;
+  
+  // check to see if the feeds directory exists. If not attempt to create it.
+  if ( is_dir($feedpath) == FALSE ) {
+    $mkdirsuccess = mkdir($feedpath, 755);
+    
+    // verify directory exists
+    if ( $feedpath == FALSE ){
+      watchdog('farmosnws', 'Unable to create the weather feed directory.', array(), WATCHDOG_ERROR, NULL);
+    }
+    else {
+      watchdog('farmosnws', 'Created weather feed directory.', array(), WATCHDOG_INFO, NULL);
+    } // end if
+  }
+  else {
+    // skipping actions
+    $mkdirsuccess = TRUE;
+  } // end if
+  
+  return $mkdirsuccess;
+}
+
+/**
+ *
+ * Get the weather data from the NWS
+ */
+function farmosnws_get_xml() {
+  $weatherfeedsdir = variable_get('farmosnws_weather_feeds_dir');
+
+  // TO DO: Add converter for schema to actual path
+  // $weatherfeedsdir = file_create_url($weatherfeedsdir);
+  
+  $locations = variable_get('farmosnws_locations', '');
+  $location_array = explode(",", $locations);
+  
+  foreach ($location_array as $loc) {
+    // remove carriage returns and new lines
+    $loc = str_replace(" ", "", str_replace("\r", "", str_replace("\n", "", $loc)));
+
+    // build URL to connect to NWS
+    $weather_feed_name = $weatherfeedsdir . '/' . uniqid($loc, FALSE) . '.xml';
+    $url = "http://w1.weather.gov/xml/current_obs/" . $loc . ".xml";
+  
+    watchdog('farmosnws', $url, array(), WATCHDOG_DEBUG, NULL);
+    watchdog('farmosnws', 'Getting weather data for ' . $loc, array(), WATCHDOG_INFO, NULL);
+    
+    $response = drupal_http_request($url, array());
+    
+    // if error occurs when performing the request
+    if ( $response->error ) {
+      watchdog('farmosnws', 'Response code: ' . $response->code . '. ' . $response->error, array(), WATCHDOG_ERROR, NULL);
+      drupal_set_message($response->error, 'error', FALSE);
+    }
+    else{
+      // if no errors occur when performing the request
+      watchdog('farmosnws', 'Response code: ' . $response->code, array(), WATCHDOG_INFO, NULL);
+
+      // if the directory doesnt exist, then create it with 755 permissions
+      $direxist = farmosnws_create_feed_dir($weatherfeedsdir);
+      
+      if ( $direxist == TRUE ) {
+        // save the contents retrieved
+        file_put_contents($weather_feed_name, $response->data);
+        watchdog('farmosnws', 'Weather data saved to ' . $weather_feed_name, array(), WATCHDOG_INFO, NULL);
+        
+        farmosnws_convert_xml_2_csv($weather_feed_name);
+      }
+      else {
+        drupal_set_message("Feed could not be downloaded because the directory does not exist. Please verify that Drupal has write access and try again.", 'error', FALSE);
+        watchdog('farmosnws', 'Feed could not be downloaded because the directory does not exist.', array(), WATCHDOG_ERROR, NULL);
+      }
+    } // end else
+  } // end foreach
+} // end function
+
+/**
+ *
+ * @feedfilename string File name that will be split into smaller feeds
+ */
+function farmosnws_convert_xml_2_csv($feedfilename) {
+  // read the files in the unprocessed directory
+  $csvfilename = $feedfilename . '.csv';
+  
+  try{
+    $csvfile = fopen($csvfilename, "w");
+    
+    if ($csvfile === FALSE) {
+      throw new Exception("Could open CSV file writing");
+    }
+ 
+    // get taxonomy term ids
+    $term_celsius = taxonomy_get_term_by_name("Celsius");
+    $term_millibars = taxonomy_get_term_by_name("Millibars");
+    $term_fahrenheit = taxonomy_get_term_by_name("Fahrenheit");
+    $term_inches = taxonomy_get_term_by_name("Inches");
+    $term_inches = taxonomy_get_term_by_name("Humidity");
+    
+    // write header
+    fputcsv($csvfile, array("Done", "Date", "Name", "Notes", "Value", "Unit"));
+    
+    // load the xml file
+    $xml = simplexml_load_file($feedfilename);
+
+    // load the units configuration
+    $measure_units = variable_get('farmosnws_temp_units', 'us');
+  
+    // log the metric units
+    if ( $measure_units == 'metric' || $measure_units == 'both' ){
+      // temperature in C
+      fputcsv($csvfile,
+          array(1, // done
+              $xml->observation_time_rfc822, // date
+              $xml->location . ' Temperature', // name
+              $xml->location, // location
+              // "Temperature", // category
+              $xml->temp_c, // value
+              "Celsius", // unit
+          ), ',');
+      
+      // log the barametric pressure
+      fputcsv($csvfile,
+          array(1, // done
+              $xml->observation_time_rfc822, // date
+              $xml->location . ' Barometric Pressure', // name
+              $notes, // notes
+              // "Pressure",
+              $xml->pressure_mb,
+              "Millibars",
+          ), ',');
+    }
+    
+    // log the US, standard units
+    if ( $measure_units == 'us' || $measure_units == 'both' ){
+      // temperature in F
+      fputcsv($csvfile,
+          array(1,
+              $xml->observation_time_rfc822,
+              $xml->location . ' Temperature', // name
+              $xml->location,
+              // "Temperature",
+              $xml->temp_f,
+              "Fahrenheit",
+          ), ',');
+      
+      // log the barametric pressure
+      fputcsv($csvfile,
+          array(1,
+              $xml->observation_time_rfc822,
+              $xml->location . ' Barometric Pressure', // name
+              $xml->location,
+              // "Pressure",
+              $xml->pressure_in,
+              "Inches",
+          ), ',');
+    }
+    
+    // log the relative humidity
+    fputcsv($csvfile,
+        array("1",
+            $xml->observation_time_rfc822,
+            $xml->location . ' Humidity', // name
+            $xml->location,
+            // "Humidity",
+            $xml->relative_humidity,
+            "Percent Humidity",
+        ), ',');
+    
+    // log the wind speed
+    fputcsv($csvfile,
+        array("1",
+            $xml->observation_time_rfc822,
+            $xml->location . ' Wind Speed', // name
+            $xml->location,
+            // "Wind",
+            $xml->wind_mph,
+            "MPH",
+        ), ',');
+    
+    // log the wind direction
+    fputcsv($csvfile,
+        array("1",
+            $xml->observation_time_rfc822,
+            $xml->location . ' Wind Direction', // name
+            $xml->location,
+            // "Wind",
+            $xml->wind_degrees,
+            "Direction",
+        ), ',');
+    
+    // log the weather string
+    fputcsv($csvfile,
+        array("1",
+            $xml->observation_time_rfc822,
+            $xml->location . ' Weather', // name
+            $xml->weather, // $xml->location . ' ' . $xml->observation_time_rfc822,
+            // "Weather",
+            "", // $xml->weather,
+            "",
+        ), ',');
+    
+    // log the visibility
+    fputcsv($csvfile,
+        array("1",
+            $xml->observation_time_rfc822,
+            $xml->location . ' Visibility', // name
+            $xml->location,
+            // "Visibility",
+            $xml->visibility_mi,
+            "Miles",
+        ), ',');
+  
+    // close the file
+    fclose($csvfile);
+    
+    // remove feed file
+    if ( variable_get('farmosnws_del_process_feed', "no") == "yes" ) {
+      $removefeed = unlink($feedfilename);
+      if ($removefeed == FALSE){
+        throw new Exception("Unable to remove XML feed file " . $feedfilename);
+      }
+    }
+  }
+  catch(Exception $e) {
+    watchdog('farmosnws', $e->getMessage(), array(), WATCHDOG_ERROR, NULL);
+    drupal_set_message($e->getMessage(), 'error');
+  }
+}
+
+

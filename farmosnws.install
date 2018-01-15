@@ -1,0 +1,66 @@
+<?php
+
+/**
+ *
+ * implements hook_install()
+ */
+function farmosnws_install() {
+
+  // add the quantity types
+
+  // get the vocabulary id
+  $vocab_qty_units = taxonomy_vocabulary_machine_name_load('farm_quantity_units');
+
+  // list of terms to add 
+  $terms_qty_list = array('Fahrenheit', 'Celsius', 'Percent Humdity', 'Direction', 'Inches', 'MPH', 'Miles', 'Knots', 'KM', 'Degrees');
+  
+  // check if the term exists, if it does not then add it
+  foreach($terms_qty_list as $term_qty_item) {
+    $taxterm = taxonomy_get_term_by_name($term_qty_item);
+  	
+    if (count($taxterm) == 0) {
+      $tax_qty_term = new stdClass();
+      $tax_qty_term->name = $term_qty_item;
+      $tax_qty_term->vid = $vocab_qty_units->vid;
+      taxonomy_term_save($tax_qty_term);
+      
+      watchdog('farmosnws', 'Created ' . $term_qty_item . ' taxonomy term.', array(), WATCHDOG_INFO, NULL);
+    }
+    else {
+      watchdog('farmosnws', 'Matched taxonomy term ' . $term_qty_item, array(), WATCHDOG_INFO, NULL);
+    }
+  }
+
+  // set default variable values
+  variable_set('farmosnws_temp_units', 'us');
+  variable_set('farmosnws_delete_xml', 'yes');
+}
+
+/**
+ * 
+ * implements hook_enable()
+ */
+function farmosnws_enable() {
+  // notice to visit configuration page to set initial values for variables
+  drupal_set_message(t("Visit the module " . l("configuration page", 'admin/config/services/farmosnws') . " to complete module setup."), 'warning', FALSE);
+  watchdog('farmosnws', 'Visit the module configuration page to complete module setup', array(), WATCHDOG_INFO, NULL);
+}
+
+/**
+ * 
+ * implements hook_uninstall()
+ */
+function farmosnws_uninstall() {
+  // delete all the variables created by the module
+  $query = "select name from {variable} where name like :varname";
+  $result = db_query($query, array(':varname' => db_like('farmosnws') . '%'));
+
+  foreach($result as $row) {
+    variable_del($row->name);
+  } // end foreach
+  
+  menu_rebuild();
+
+  watchdog('farmosnws', 'FarmOS NWS module has been uninstalled', array(), WATCHDOG_INFO, NULL);
+} // end function
+
