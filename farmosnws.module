@@ -121,6 +121,19 @@ function farmosnws_get_xml() {
 
 /**
  *
+ * Check the cron frequency. If not set to 1 hour, then warn of the impact.
+ */
+function farmosnws_check_cron_time() {
+  $crontime = variable_get('', 0);
+
+  if ($crontime != 86400) {
+    drupal_set_message("Cron is not set to 1 hour. New NWS data feeds are released hourly.", 'warn', FALSE);
+  }
+}
+
+
+/**
+ *
  * @feedfilename string File name that will be split into smaller feeds
  */
 function farmosnws_convert_xml_2_csv($feedfilename) {
