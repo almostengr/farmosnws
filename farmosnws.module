@@ -8,6 +8,8 @@
  *
  * Implements hook_menu()
  * 
+ * @todo Have URL that will allow processing data outside of cron, ad-hoc run
+ * 
  * @return Array of menu links
  */
 function farmosnws_menu() {
@@ -22,7 +24,6 @@ function farmosnws_menu() {
   	'file' => 'farmosnws.admin.inc',
   );
    
-  // TO DO: Have URL that will allow for non-cron processing of data 
   return $items;
 }
 
