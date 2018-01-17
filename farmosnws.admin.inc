@@ -7,6 +7,7 @@
  * @return Returns loaded form array object
  */
 function farmosnws_admin_form() {
+  // check the variables that support this module
   farmosnws_check_farmos_measurements();
   farmosnws_check_cron_time();
   
@@ -60,15 +61,15 @@ function farmosnws_admin_form() {
 }
 
 /**
- *
- * Validate the module settings
+ * Validate the module settings form
  */
 function farmosnws_admin_form_validate($form, &$form_state) {
   // validate that the work directory exists and can be created
   $weatherfeedsdir = $form_state['values']['farmosnws_weather_feeds_dir'];
   
   $direxist = farmosnws_create_feed_dir($weatherfeedsdir);
-  if ( $direxist == FALSE ){
+  
+  if ($direxist == FALSE) {
     form_set_error('farmosnws_weather_feeds_dir', 'The weather feed directory cannot be created. Please verify that Drupal as write permissions and try again.');
   }
 } // end if

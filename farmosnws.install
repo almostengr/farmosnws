@@ -1,7 +1,6 @@
 <?php
 
 /**
- *
  * implements hook_install()
  */
 function farmosnws_install() {
@@ -39,7 +38,6 @@ function farmosnws_install() {
 }
 
 /**
- * 
  * implements hook_enable()
  */
 function farmosnws_enable() {
@@ -52,7 +50,6 @@ function farmosnws_enable() {
 }
 
 /**
- * 
  * implements hook_uninstall()
  */
 function farmosnws_uninstall() {
@@ -69,6 +66,11 @@ function farmosnws_uninstall() {
   watchdog('farmosnws', 'FarmOS NWS module has been uninstalled', array(), WATCHDOG_INFO, NULL);
 } // end function
 
+/**
+ * Use FarmOS temperature setting and limit the number of feed pulls from NWS.
+ *
+ * Remove the temperature variable used by the module.
+ */
 function farmosnws_update_7201() {
   variable_del('farmosnws_temp_units');
   variable_set('farmosnws_cron_last', 0);

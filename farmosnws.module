@@ -5,7 +5,6 @@
  */
 
 /**
- *
  * Implements hook_menu()
  * 
  * @todo Have URL that will allow processing data outside of cron, ad-hoc run
@@ -28,7 +27,6 @@ function farmosnws_menu() {
 }
 
 /**
- *
  * Implements hook_cron()
  */
 function farmosnws_cron() {
@@ -62,7 +60,7 @@ function farmosnws_create_feed_dir($feedpath) {
     $mkdirsuccess = mkdir($feedpath, 755);
     
     // verify directory exists
-    if ( $feedpath == FALSE ){
+    if ( $feedpath == FALSE ) {
       // watchdog('farmosnws', 'Unable to create the weather feed directory.', array(), WATCHDOG_ERROR, NULL);
       farmosnws_display_error("Unable to create weather feed directory");
     }
@@ -120,7 +118,7 @@ function farmosnws_get_xml() {
       // drupal_set_message($response->error, 'error', FALSE);
       farmosnws_display_error($response->error);
     }
-    else{
+    else {
       // if no errors occur when performing the request
       watchdog('farmosnws', 'Response code: ' . $response->code, array(), WATCHDOG_INFO, NULL);
 
@@ -178,7 +176,7 @@ function farmosnws_convert_xml_2_csv($feedfilename) {
   // read the files in the unprocessed directory
   $csvfilename = $feedfilename . '.csv';
   
-  try{
+  try {
     $csvfile = fopen($csvfilename, "w");
     
     if ($csvfile === FALSE) {
@@ -220,7 +218,7 @@ function farmosnws_convert_xml_2_csv($feedfilename) {
     }
     
     // log the US, standard units
-    if ( $measure_units == 'us' ){
+    if ( $measure_units == 'us' ) {
       // temperature in F
       fputcsv($csvfile,
           array(1,
@@ -305,7 +303,7 @@ function farmosnws_convert_xml_2_csv($feedfilename) {
     // remove feed file
     if ( variable_get('farmosnws_del_process_feed', "no") == "yes" ) {
       $removefeed = unlink($feedfilename);
-      if ($removefeed == FALSE){
+      if ($removefeed == FALSE) {
         throw new Exception("Unable to remove XML feed file " . $feedfilename);
       }
     }
