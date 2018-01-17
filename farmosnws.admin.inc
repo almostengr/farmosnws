@@ -8,6 +8,7 @@
  */
 function farmosnws_admin_form() {
   farmosnws_check_cron_time();
+  farmosnws_check_cron_time();
   
   $form = array();
   
@@ -27,18 +28,6 @@ function farmosnws_admin_form() {
     '#default_value' => variable_get('farmosnws_locations'),
   );
   
-  $form['farmosnws_temp_units'] = array(
-    '#type' => 'select',
-    '#title' => t('Measurement Units'),
-    '#required' => TRUE,
-    '#options' => array(
-      'us' => t('Fahrenheit'),
-      'metric' => t('Celsius'),
-    ),
-    '#description' => t('Select the system of measurement that you would like to use.'),
-    '#default_value' => variable_get('farmosnws_temp_units'),
-  );
-
   $form['farmosnws_delete_xml'] = array(
     '#type' => 'select',
     '#title' => t('Delete Processed XML'),

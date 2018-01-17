@@ -157,6 +157,18 @@ function farmosnws_check_cron_time() {
 }
 
 /**
+ * 
+ * Check that the units of measurement have been set in the FarmOS configuration. 
+ * If the value has not been set then display a warning.
+ */
+function farmosnws_check_farmos_measurements() {  
+  $units = variable_get('farm_quantity_unit_system', 0);
+  if ($units == 0) {
+    drupal_set_message("Units of measurement is not set. Set this value in the Farm OS configuration.", 'warning', FALSE);
+  }
+}
+
+/**
  *
  * @param string $feedfilename 
  *  string File name that will be split into smaller feeds
@@ -172,13 +184,6 @@ function farmosnws_convert_xml_2_csv($feedfilename) {
       throw new Exception("Could open CSV file writing");
     }
  
-    // get taxonomy term ids
-    $term_celsius = taxonomy_get_term_by_name("Celsius");
-    $term_millibars = taxonomy_get_term_by_name("Millibars");
-    $term_fahrenheit = taxonomy_get_term_by_name("Fahrenheit");
-    $term_inches = taxonomy_get_term_by_name("Inches");
-    $term_inches = taxonomy_get_term_by_name("Humidity");
-    
     // write header
     fputcsv($csvfile, array("Done", "Date", "Name", "Notes", "Value", "Unit"));
     
@@ -186,10 +191,10 @@ function farmosnws_convert_xml_2_csv($feedfilename) {
     $xml = simplexml_load_file($feedfilename);
 
     // load the units configuration
-    $measure_units = variable_get('farmosnws_temp_units', 'us');
+    $measure_units = variable_get('farm_quantity_unit_system', 'metric');
   
     // log the metric units
-    if ( $measure_units == 'metric' || $measure_units == 'both' ){
+    if ( $measure_units == 'metric') {
       // temperature in C
       fputcsv($csvfile,
           array(1, // done
@@ -214,7 +219,7 @@ function farmosnws_convert_xml_2_csv($feedfilename) {
     }
     
     // log the US, standard units
-    if ( $measure_units == 'us' || $measure_units == 'both' ){
+    if ( $measure_units == 'us' ){
       // temperature in F
       fputcsv($csvfile,
           array(1,

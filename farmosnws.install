@@ -32,8 +32,9 @@ function farmosnws_install() {
   }
 
   // set default variable values
-  variable_set('farmosnws_temp_units', 'us');
+  // variable_set('farmosnws_temp_units', 'us');
   variable_set('farmosnws_delete_xml', 'yes');
+  variable_set('farmosnws_cron_last', 0);
 }
 
 /**
@@ -44,6 +45,9 @@ function farmosnws_enable() {
   // notice to visit configuration page to set initial values for variables
   drupal_set_message(t("Visit the module " . l("configuration page", 'admin/config/services/farmosnws') . " to complete module setup."), 'warning', FALSE);
   watchdog('farmosnws', 'Visit the module configuration page to complete module setup', array(), WATCHDOG_INFO, NULL);
+  
+  farmosnws_check_farmos_measurements();
+  farmosnws_check_cron_time();
 }
 
 /**
@@ -64,3 +68,7 @@ function farmosnws_uninstall() {
   watchdog('farmosnws', 'FarmOS NWS module has been uninstalled', array(), WATCHDOG_INFO, NULL);
 } // end function
 
+function farmosnws_update_7201() {
+  variable_del('farmosnws_temp_units');
+  variable_set('farmosnws_cron_last', 0);
+}
