@@ -35,6 +35,7 @@ function farmosnws_install() {
   // variable_set('farmosnws_temp_units', 'us');
   variable_set('farmosnws_delete_xml', 'yes');
   variable_set('farmosnws_cron_last', 0);
+  variable_set('farmosnws_locations', 'KMGM');
 }
 
 /**
