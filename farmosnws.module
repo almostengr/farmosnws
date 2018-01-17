@@ -240,6 +240,28 @@ function farmosnws_convert_xml_2_csv($feedfilename) {
               $xml->pressure_in,
               "Inches",
           ), ',');
+      
+      // log the wind speed
+      fputcsv($csvfile,
+          array("1",
+              $xml->observation_time_rfc822,
+              $xml->location . ' Wind Speed', // name
+              $xml->location,
+              // "Wind",
+              $xml->wind_mph,
+              "MPH",
+          ), ',');
+      
+      // log the visibility
+      fputcsv($csvfile,
+          array("1",
+              $xml->observation_time_rfc822,
+              $xml->location . ' Visibility', // name
+              $xml->location,
+              // "Visibility",
+              $xml->visibility_mi,
+              "Miles",
+          ), ',');
     }
     
     // log the relative humidity
@@ -253,16 +275,6 @@ function farmosnws_convert_xml_2_csv($feedfilename) {
             "Percent Humidity",
         ), ',');
     
-    // log the wind speed
-    fputcsv($csvfile,
-        array("1",
-            $xml->observation_time_rfc822,
-            $xml->location . ' Wind Speed', // name
-            $xml->location,
-            // "Wind",
-            $xml->wind_mph,
-            "MPH",
-        ), ',');
     
     // log the wind direction
     fputcsv($csvfile,
@@ -284,17 +296,6 @@ function farmosnws_convert_xml_2_csv($feedfilename) {
             // "Weather",
             "", // $xml->weather,
             "",
-        ), ',');
-    
-    // log the visibility
-    fputcsv($csvfile,
-        array("1",
-            $xml->observation_time_rfc822,
-            $xml->location . ' Visibility', // name
-            $xml->location,
-            // "Visibility",
-            $xml->visibility_mi,
-            "Miles",
         ), ',');
   
     // close the file

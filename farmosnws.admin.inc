@@ -57,6 +57,54 @@ function farmosnws_admin_form() {
     '#default_value' => variable_get('farmosnws_feed_threshold', 3600),
   );
   
+  $form['farmosnws_dataset'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Data to Save'),
+    '#description' => t('Select the data elements that you wish to save'),
+  );
+  
+  $form['farmosnws_dataset']['farmosnws_log_temperature'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Log Temperature'),
+    '#default_value' => variable_get('farmosnws_log_temperature'),
+  );
+  
+  $form['farmosnws_dataset']['farmosnws_log_pressure'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Barametric Pressure'),
+    '#default_value' => variable_get('farmosnws_log_pressure'),
+  );
+  
+  $form['farmosnws_dataset']['farmosnws_log_windspeed'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Wind Speed'),
+    '#default_value' => variable_get('farmosnws_log_windspeed'),
+  );
+  
+  $form['farmosnws_dataset']['farmosnws_log_winddirection'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Wind Direction'),
+    '#default_value' => variable_get('farmosnws_log_winddirection'),
+  );
+  
+  $form['farmosnws_dataset']['farmosnws_log_visibility'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Relative Humidity'),
+    '#default_value' => variable_get('farmosnws_log_visibility'),
+  );
+  
+  $form['farmosnws_dataset']['farmosnws_log_weather'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Weather Description'),
+    '#default_value' => variable_get('farmosnws_log_weather'),
+  );
+  
+  $form['farmosnws_dataset']['farmosnws_log_dewpoint'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Dew Point'),
+    '#default_value' => variable_get('farmosnws_log_dewpoint'),
+  );
+  
   return system_settings_form($form);
 }
 
@@ -73,4 +121,3 @@ function farmosnws_admin_form_validate($form, &$form_state) {
     form_set_error('farmosnws_weather_feeds_dir', 'The weather feed directory cannot be created. Please verify that Drupal as write permissions and try again.');
   }
 } // end if
-
