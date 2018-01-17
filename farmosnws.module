@@ -62,7 +62,8 @@ function farmosnws_create_feed_dir($feedpath) {
     
     // verify directory exists
     if ( $feedpath == FALSE ){
-      watchdog('farmosnws', 'Unable to create the weather feed directory.', array(), WATCHDOG_ERROR, NULL);
+      // watchdog('farmosnws', 'Unable to create the weather feed directory.', array(), WATCHDOG_ERROR, NULL);
+      farmosnws_display_error("Unable to create weather feed directory");
     }
     else {
       watchdog('farmosnws', 'Created weather feed directory.', array(), WATCHDOG_INFO, NULL);
@@ -74,6 +75,16 @@ function farmosnws_create_feed_dir($feedpath) {
   } // end if
   
   return $mkdirsuccess;
+}
+
+/**
+ * 
+ * @param string $errmessage The error message to be displayed on the screen 
+ *   and written to the log/watchdog.
+ */
+function farmosnws_display_error($errmessage) {
+  drupal_set_message($errmessage, 'error', FALSE);
+  watchdog('farmosnws', $errmessage, array(), WATCHDOG_ERROR, NULL);
 }
 
 /**
@@ -104,8 +115,9 @@ function farmosnws_get_xml() {
     
     // if error occurs when performing the request
     if ( $response->error ) {
-      watchdog('farmosnws', 'Response code: ' . $response->code . '. ' . $response->error, array(), WATCHDOG_ERROR, NULL);
-      drupal_set_message($response->error, 'error', FALSE);
+      // watchdog('farmosnws', 'Response code: ' . $response->code . '. ' . $response->error, array(), WATCHDOG_ERROR, NULL);
+      // drupal_set_message($response->error, 'error', FALSE);
+      farmosnws_display_error($response->error);
     }
     else{
       // if no errors occur when performing the request
@@ -293,7 +305,8 @@ function farmosnws_convert_xml_2_csv($feedfilename) {
     }
   }
   catch(Exception $e) {
-    watchdog('farmosnws', $e->getMessage(), array(), WATCHDOG_ERROR, NULL);
-    drupal_set_message($e->getMessage(), 'error');
+    farmosnws_display_error($e-getMessage());
+    // watchdog('farmosnws', $e->getMessage(), array(), WATCHDOG_ERROR, NULL);
+    // drupal_set_message($e->getMessage(), 'error');
   }
 }
