@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * Code for the FarmOS NWS feature.
+ * Code for the FarmOS NWS module
  */
 
 /**
@@ -31,7 +31,17 @@ function farmosnws_menu() {
  * Implements hook_cron()
  */
 function farmosnws_cron() {
-  farmosnws_get_xml();
+  // get the last cron time.
+  $last_cron = variable_get('farmosnws_cron_last', 0);
+  $next_cron = $last_cron + 3600;
+  
+  // if it is time to pull the next feed, then pull it.
+  if (REQUEST_TIME >= $next_cron) {
+    farmosnws_get_xml();
+  }
+  else {
+    watchdog('farmosnws', 'Cron ran. Skipping feed pull.', array(), WATCHDOG_INFO, NULL);
+  }
 }
 
 /**
@@ -110,6 +120,9 @@ function farmosnws_get_xml() {
         watchdog('farmosnws', 'Weather data saved to ' . $weather_feed_name, array(), WATCHDOG_INFO, NULL);
         
         farmosnws_convert_xml_2_csv($weather_feed_name);
+        
+        // update the last feed pull time
+        variable_set("farmosnws_cron_last", REQUEST_TIME);
       }
       else {
         drupal_set_message("Feed could not be downloaded because the directory does not exist. Please verify that Drupal has write access and try again.", 'error', FALSE);
@@ -120,21 +133,21 @@ function farmosnws_get_xml() {
 } // end function
 
 /**
- *
+ * 
  * Check the cron frequency. If not set to 1 hour, then warn of the impact.
  */
 function farmosnws_check_cron_time() {
-  $crontime = variable_get('', 0);
+  $crontime = variable_get('cron_safe_threshold', 0);
 
-  if ($crontime != 86400) {
-    drupal_set_message("Cron is not set to 1 hour. New NWS data feeds are released hourly.", 'warn', FALSE);
+  if ($crontime != 3600) {
+    drupal_set_message("Cron is not set to 1 hour. It is recommended that cron runs hourly to load new NWS data feeds as they are published.", 'warn', FALSE);
   }
 }
 
-
 /**
  *
- * @feedfilename string File name that will be split into smaller feeds
+ * @param string $feedfilename 
+ *  string File name that will be split into smaller feeds
  */
 function farmosnws_convert_xml_2_csv($feedfilename) {
   // read the files in the unprocessed directory
@@ -284,5 +297,3 @@ function farmosnws_convert_xml_2_csv($feedfilename) {
     drupal_set_message($e->getMessage(), 'error');
   }
 }
-
-

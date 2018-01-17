@@ -7,6 +7,8 @@
  * @return Returns loaded form array object
  */
 function farmosnws_admin_form() {
+  farmosnws_check_cron_time();
+  
   $form = array();
   
   $form['farmosnws_weather_feeds_dir'] = array(
