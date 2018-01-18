@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Code for the FarmOS NWS module
@@ -15,7 +16,7 @@ function farmosnws_menu() {
   $items = array();
   
   $items['admin/config/services/farmosnws'] = array(
-    'title' => t('FarmOS NWS Settings'),
+    'title' => t('FarmOS NWS'),
     'description' => 'Add and remove additional feeds to be pulled by FarmOS NWS',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('farmosnws_admin_form'),
@@ -56,12 +57,13 @@ function farmosnws_create_feed_dir($feedpath) {
   $mkdirsuccess = NULL;
   
   // check to see if the feeds directory exists. If not attempt to create it.
-  if ( is_dir($feedpath) == FALSE ) {
+  if (is_dir($feedpath) == FALSE) {
     $mkdirsuccess = mkdir($feedpath, 755);
     
     // verify directory exists
-    if ( $feedpath == FALSE ) {
+    if ($feedpath == FALSE) {
       farmosnws_display_error("Unable to create weather feed directory");
+      $mkdirsuccess = FALSE;
     }
     else {
       watchdog('farmosnws', 'Created weather feed directory.', array(), WATCHDOG_INFO, NULL);
@@ -124,7 +126,7 @@ function farmosnws_get_xml() {
     $response = drupal_http_request($url, array());
     
     // if error occurs when performing the request
-    if ( $response->error ) {
+    if ($response->error) {
       farmosnws_display_error($response->error);
     }
     else {
@@ -134,7 +136,7 @@ function farmosnws_get_xml() {
       // if the directory doesnt exist, then create it with 755 permissions
       $direxist = farmosnws_create_feed_dir($weatherfeedsdir);
       
-      if ( $direxist == TRUE ) {
+      if ($direxist == TRUE) {
         // save the contents retrieved
         file_put_contents($weather_feed_name, $response->data);
         watchdog('farmosnws', 'Weather data saved to ' . $weather_feed_name, array(), WATCHDOG_INFO, NULL);
@@ -204,7 +206,7 @@ function farmosnws_convert_xml_2_csv($feedfilename) {
     $measure_units = variable_get('farm_quantity_unit_system', 'metric');
   
     // log the metric units
-    if ( $measure_units == 'metric') {
+    if ($measure_units == 'metric') {
       if (variable_get('farmosnws_log_temperature', 1) == 1) {
         // temperature in C
         fputcsv($csvfile, array(1, $xml->observation_time_rfc822, $xml->location . ' Temperature', $notes, $xml->temp_c, "Celsius"));
@@ -229,7 +231,7 @@ function farmosnws_convert_xml_2_csv($feedfilename) {
     } // end if metric units
     
     // log the US, standard units
-    if ( $measure_units == 'us' ) {
+    if ($measure_units == 'us') {
       if (variable_get('farmosnws_log_temperature', 1) == 1) {
         // temperature in F
         fputcsv($csvfile, array(1, $xml->observation_time_rfc822, $xml->location . ' Temperature', $notes, $xml->temp_f, "Fahrenheit"));
@@ -270,7 +272,7 @@ function farmosnws_convert_xml_2_csv($feedfilename) {
     fclose($csvfile);
     
     // remove feed file
-    if ( variable_get('farmosnws_delete_xml', "no") == "yes" ) {
+    if (variable_get('farmosnws_delete_xml', "no") == "yes") {
       $removefeed = unlink($feedfilename);
       if ($removefeed == FALSE) {
         throw new Exception("Unable to remove XML feed file " . $feedfilename);
