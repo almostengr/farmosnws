@@ -82,8 +82,8 @@ function farmosnws_create_feed_dir($feedpath) {
  *   and written to the log/watchdog.
  */
 function farmosnws_display_error($errmessage) {
-  drupal_set_message($errmessage, 'error', FALSE);
-  watchdog('farmosnws', $errmessage, array(), WATCHDOG_ERROR, NULL);
+  drupal_set_message(t($errmessage), 'error', FALSE);
+  watchdog('farmosnws', t($errmessage), array(), WATCHDOG_ERROR, NULL);
 }
 
 /**
@@ -151,7 +151,7 @@ function farmosnws_check_cron_time() {
   $crontime = variable_get('cron_safe_threshold', 0);
 
   if ($crontime != "3600") {
-    drupal_set_message("Cron is not set to 1 hour. It is recommended that cron runs hourly to load new NWS data feeds as they are published.", 'warning', FALSE);
+    drupal_set_message(t("Cron is not set to 1 hour. It is recommended that cron runs hourly to load new NWS data feeds as they are published."), 'warning', FALSE);
   }
 }
 
@@ -164,7 +164,7 @@ function farmosnws_check_farmos_measurements() {
   $units = variable_get('farm_quantity_unit_system', 0);
 
   if ($units == "0") {
-    drupal_set_message("Units of measurement is not set. Set this value in the Farm OS configuration.", 'warning', FALSE);
+    drupal_set_message(t("Units of measurement is not set. Set this value in the " . l(t("Farm OS configuration."), "admin/config/farm/quantity")), 'warning', FALSE);
   }
 }
 
