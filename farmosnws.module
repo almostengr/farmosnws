@@ -15,7 +15,7 @@
 function farmosnws_menu() {
   $items = array();
   
-  $items['admin/config/services/farmosnws'] = array(
+  $items['admin/config/farm/farmosnws'] = array(
     'title' => t('FarmOS NWS'),
     'description' => t('Add and remove additional feeds to be pulled by FarmOS NWS'),
     'page callback' => 'drupal_get_form',
@@ -24,7 +24,7 @@ function farmosnws_menu() {
     'file' => 'farmosnws.admin.inc',
   );
 
-  $items['admin/config/services/farmosnws/force'] = array(
+  $items['admin/config/farm/farmosnws/force'] = array(
     'title' => t('Force Feed Pull'),
     'desecription' => t('Bypass hourly feed pull and pull latest feed from NWS.'),
     'page callback' => 'drupal_get_form',
