@@ -73,9 +73,8 @@ function farmosnws_uninstall() {
 } // end function
 
 /**
- * Use FarmOS temperature setting, limit the number of feed pulls from NWS, and update new and existing variables.
- *
- * Remove the temperature variable used by the module.
+ * Use FarmOS unit of measurement setting, limit the number of feed pulls from 
+ * NWS, and update new and existing variables.
  */
 function farmosnws_update_7201(&$sandbox) {
   // list of terms to add
