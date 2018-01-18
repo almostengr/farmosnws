@@ -112,7 +112,7 @@ function farmosnws_get_xml_force() {
   farmosnws_get_xml();
 
   // display message
-  drupal_set_message("Feed was forcefully pulled.", 'status', FALSE);
+  drupal_set_message(t("Feed was forcefully pulled. Run cron to load feed."), 'status', FALSE);
 
   // redirect back to the admin form
   drupal_goto('admin/config/services/farmosnws');
