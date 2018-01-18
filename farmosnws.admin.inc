@@ -1,7 +1,6 @@
 <?php
 
 /**
- *
  * Module configuration form
  * 
  * @return Returns loaded form array object
@@ -46,7 +45,6 @@ function farmosnws_admin_form() {
     '#title' => t('Feed Pull Frequency'),
     '#required' => TRUE,
     '#options' => array(
-      // 'all' => 'Everytime Cron Runs',
       '3600' => '1 Hour',
       '7200' => '2 Hours',
       '10800' => '3 Hours',

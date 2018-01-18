@@ -8,8 +8,6 @@
 /**
  * Implements hook_menu()
  * 
- * @todo Have URL that will allow processing data outside of cron, ad-hoc run
- * 
  * @return Array of menu links
  */
 function farmosnws_menu() {
@@ -17,7 +15,7 @@ function farmosnws_menu() {
   
   $items['admin/config/farm/farmosnws'] = array(
     'title' => t('FarmOS NWS'),
-    'description' => t('Add and remove additional feeds to be pulled by FarmOS NWS'),
+    'description' => t('Configure data feeds to be pulled by FarmOS NWS.'),
     'page callback' => 'drupal_get_form',
     'page arguments' => array('farmosnws_admin_form'),
     'access arguments' => array('access administration pages'),
@@ -26,7 +24,7 @@ function farmosnws_menu() {
 
   $items['admin/config/farm/farmosnws/force'] = array(
     'title' => t('Force Feed Pull'),
-    'desecription' => t('Bypass hourly feed pull and pull latest feed from NWS.'),
+    'desecription' => t('Bypass cron feed pull and pull latest feed from NWS.'),
     'page callback' => 'drupal_get_form',
     'page arguments' => array('farmosnws_admin_force_feed_form'),
     'access arguments' => array('access administration pages'),
@@ -55,7 +53,6 @@ function farmosnws_cron() {
 }
 
 /**
- *
  * Check and create if necessary the path where the weather feeds will be stored.
  * 
  * @param string feedpath
@@ -87,7 +84,7 @@ function farmosnws_create_feed_dir($feedpath) {
   return $mkdirsuccess;
 }
 
-/*a
+/**
  * Displays an error message on the page and in the log.
  *
  * @param string $errmessage The error message to be displayed on the screen 
@@ -110,14 +107,12 @@ function farmosnws_display_warning($warnmessage) {
 }
 
 /**
- *
  * Get the weather data from the NWS
+ *
+ * @TODO add converter for schema to actual path
  */
 function farmosnws_get_xml() {
   $weatherfeedsdir = variable_get('farmosnws_weather_feeds_dir');
-
-  // TO DO: Add converter for schema to actual path
-  // $weatherfeedsdir = file_create_url($weatherfeedsdir);
   
   $locations = variable_get('farmosnws_locations', '');
   $location_array = explode(",", $locations);
@@ -129,10 +124,11 @@ function farmosnws_get_xml() {
     // build URL to connect to NWS
     $weather_feed_name = $weatherfeedsdir . '/' . uniqid($loc, FALSE) . '.xml';
     $url = "http://w1.weather.gov/xml/current_obs/" . $loc . ".xml";
-  
+ 
     watchdog('farmosnws', $url, array(), WATCHDOG_DEBUG, NULL);
     watchdog('farmosnws', 'Getting weather data for ' . $loc, array(), WATCHDOG_INFO, NULL);
-    
+  
+    // pull the data   
     $response = drupal_http_request($url, array());
     
     // if error occurs when performing the request
@@ -164,7 +160,6 @@ function farmosnws_get_xml() {
 } // end function
 
 /**
- * 
  * Check the cron frequency. If not set to 1 hour, then warn of the impact.
  */
 function farmosnws_check_cron_time() {
@@ -176,7 +171,6 @@ function farmosnws_check_cron_time() {
 }
 
 /**
- * 
  * Check that the units of measurement have been set in the FarmOS configuration.
  * If the value has not been set then display a warning.
  */
@@ -191,6 +185,8 @@ function farmosnws_check_farmos_measurements() {
 /**
  * Convert the xml file to csv file.
  *
+ * @TODO Default to metric units if value is not set.
+ *
  * @param string $feedfilename 
  *  string File name that will be split into smaller feeds
  */
@@ -201,7 +197,8 @@ function farmosnws_convert_xml_2_csv($feedfilename) {
   
   try {
     $csvfile = fopen($csvfilename, "w");
-    
+ 
+    // throw exception if file cannot be opened   
     if ($csvfile === FALSE) {
       throw new Exception("Could not open CSV file for writing");
     }
@@ -290,6 +287,7 @@ function farmosnws_convert_xml_2_csv($feedfilename) {
     }
   }
   catch(Exception $e) {
+    // handle the exception
     farmosnws_display_error($e->getMessage());
   }
 }
