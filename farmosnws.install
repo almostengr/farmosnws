@@ -11,7 +11,8 @@ function farmosnws_install() {
   $vocab_qty_units = taxonomy_vocabulary_machine_name_load('farm_quantity_units');
 
   // list of terms to add 
-  $terms_qty_list = array('Fahrenheit', 'Celsius', 'Percent Humdity', 'Direction', 'Inches', 'MPH', 'Miles', 'Knots', 'KM', 'Degrees', 'KPH');
+  $terms_qty_list = array('Inches', 'MPH', 'Miles', 'Knots', 'KM', 'Degrees');
+  $terms_qty_list .= array('KPH', 'Percent', 'Fahrenheit', 'Celsius', 'Direction');
   
   // check if the term exists, if it does not then add it
   foreach($terms_qty_list as $term_qty_item) {
@@ -81,7 +82,7 @@ function farmosnws_update_7201(&$sandbox) {
   $vocab_qty_units = taxonomy_vocabulary_machine_name_load('farm_quantity_units');
 
   // list of terms to add
-  $terms_qty_list = array('KPH', 'Kilometers', 'Degrees');
+  $terms_qty_list = array('KPH', 'Kilometers', 'Degrees', 'Percent');
 
   // check if the term exists, if it does not then add it
   foreach($terms_qty_list as $term_qty_item) {

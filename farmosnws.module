@@ -274,7 +274,7 @@ function farmosnws_convert_xml_2_csv($feedfilename) {
    
     if (variable_get('farmosnws_log_humidity', 1) == 1) {
       // log the relative humidity
-      fputcsv($csvfile, array("1", $xml->observation_time_rfc822, $xml->location . ' Humidity', $notes, $xml->relative_humidity, "Percent Humidity"));
+      fputcsv($csvfile, array("1", $xml->observation_time_rfc822, $xml->location . ' Humidity', $notes, $xml->relative_humidity, "Percent"));
     }
 
     if (variable_get('farmosnws_log_winddirection', 1) == 1) {
