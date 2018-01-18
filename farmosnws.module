@@ -20,7 +20,7 @@ function farmosnws_menu() {
     'page callback' => 'drupal_get_form',
     'page arguments' => array('farmosnws_admin_form'),
     'access arguments' => array('access administration pages'),
-  	'file' => 'farmosnws.admin.inc',
+    'file' => 'farmosnws.admin.inc',
   );
    
   return $items;
@@ -77,13 +77,21 @@ function farmosnws_create_feed_dir($feedpath) {
 }
 
 /**
- * 
  * @param string $errmessage The error message to be displayed on the screen 
  *   and written to the log/watchdog.
  */
 function farmosnws_display_error($errmessage) {
   drupal_set_message(t($errmessage), 'error', FALSE);
   watchdog('farmosnws', t($errmessage), array(), WATCHDOG_ERROR, NULL);
+}
+
+/**
+ * @param string $warnmessage The warning message to be displayed on the 
+ * screen and written to the log/watchdog.
+ */
+function farmosnws_display_warning($warnmessage) {
+  drupal_set_message(t($warnmessage), 'warning', FALSE);
+  watchdog('farmosnws', t($warnmessage), array(), WATCHDOG_WARNING, NULL);
 }
 
 /**
