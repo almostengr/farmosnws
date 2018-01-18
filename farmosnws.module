@@ -17,11 +17,19 @@ function farmosnws_menu() {
   
   $items['admin/config/services/farmosnws'] = array(
     'title' => t('FarmOS NWS'),
-    'description' => 'Add and remove additional feeds to be pulled by FarmOS NWS',
+    'description' => t('Add and remove additional feeds to be pulled by FarmOS NWS'),
     'page callback' => 'drupal_get_form',
     'page arguments' => array('farmosnws_admin_form'),
     'access arguments' => array('access administration pages'),
     'file' => 'farmosnws.admin.inc',
+  );
+
+  $items['admin/config/services/farmosnws/force'] = array(
+    'title' => t('Force Feed Pull'),
+    'desecription' => t('Bypass hourly feed pull and pull latest feed from NWS.'),
+    'page callback' => 'farmosnws_get_xml_force',
+    'access arguments' => array('access administration pages'),
+    'type' => MENU_LOCAL_ACTION,
   );
    
   return $items;
@@ -33,7 +41,7 @@ function farmosnws_menu() {
 function farmosnws_cron() {
   // get the last cron time.
   $last_cron = variable_get('farmosnws_cron_last', 0);
-  $next_cron = $last_cron + 3600;
+  $next_cron = $last_cron + 3600 - 30;
   
   // if it is time to pull the next feed, then pull it.
   if (REQUEST_TIME >= $next_cron) {
@@ -99,6 +107,17 @@ function farmosnws_display_warning($warnmessage) {
   watchdog('farmosnws', t($warnmessage), array(), WATCHDOG_WARNING, NULL);
 }
 
+function farmosnws_get_xml_force() {
+  // pull the feed
+  farmosnws_get_xml();
+
+  // display message
+  drupal_set_message("Feed was forcefully pulled.", 'status', FALSE);
+
+  // redirect back to the admin form
+  drupal_goto('admin/config/services/farmosnws');
+}
+
 /**
  *
  * Get the weather data from the NWS
@@ -126,7 +145,7 @@ function farmosnws_get_xml() {
     $response = drupal_http_request($url, array());
     
     // if error occurs when performing the request
-    if ($response->error) {
+    if (isset($response->error)) {
       farmosnws_display_error($response->error);
     }
     else {
