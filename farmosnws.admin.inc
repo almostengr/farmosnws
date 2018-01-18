@@ -48,10 +48,10 @@ function farmosnws_admin_form() {
     '#options' => array(
       // 'all' => 'Everytime Cron Runs',
       '3600' => '1 Hour',
-      '' => '2 Hours',
-      '' => '3 Hours',
-      '' => '6 Hours',
-      '' => '12 Hours', 
+      '7200' => '2 Hours',
+      '10800' => '3 Hours',
+      '21600' => '6 Hours',
+      '43200' => '12 Hours', 
     ),
     '#description' => t('Select the frequency to pull the latest weather data. This depends on cron being properly configured.'),
     '#default_value' => variable_get('farmosnws_feed_threshold', 3600),
@@ -65,7 +65,7 @@ function farmosnws_admin_form() {
   
   $form['farmosnws_dataset']['farmosnws_log_temperature'] = array(
     '#type' => 'checkbox',
-    '#title' => t('Log Temperature'),
+    '#title' => t('Temperature'),
     '#default_value' => variable_get('farmosnws_log_temperature'),
   );
   
@@ -89,7 +89,7 @@ function farmosnws_admin_form() {
   
   $form['farmosnws_dataset']['farmosnws_log_visibility'] = array(
     '#type' => 'checkbox',
-    '#title' => t('Relative Humidity'),
+    '#title' => t('Visibility'),
     '#default_value' => variable_get('farmosnws_log_visibility'),
   );
   
@@ -103,6 +103,12 @@ function farmosnws_admin_form() {
     '#type' => 'checkbox',
     '#title' => t('Dew Point'),
     '#default_value' => variable_get('farmosnws_log_dewpoint'),
+  );
+
+  $form['farmosnws_dataset']['farmosnws_log_humidity'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Relative Humidity'),
+    '#default_value' => variable_get('farmosnws_log_humidity'),
   );
   
   return system_settings_form($form);

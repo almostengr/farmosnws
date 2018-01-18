@@ -177,6 +177,7 @@ function farmosnws_check_farmos_measurements() {
 }
 
 /**
+ * Convert the xml file to csv file.
  *
  * @param string $feedfilename 
  *  string File name that will be split into smaller feeds
@@ -184,12 +185,13 @@ function farmosnws_check_farmos_measurements() {
 function farmosnws_convert_xml_2_csv($feedfilename) {
   // read the files in the unprocessed directory
   $csvfilename = $feedfilename . '.csv';
+  $notes = "";
   
   try {
     $csvfile = fopen($csvfilename, "w");
     
     if ($csvfile === FALSE) {
-      throw new Exception("Could open CSV file writing");
+      throw new Exception("Could not open CSV file for writing");
     }
  
     // write header
@@ -203,115 +205,72 @@ function farmosnws_convert_xml_2_csv($feedfilename) {
   
     // log the metric units
     if ( $measure_units == 'metric') {
-      // temperature in C
-      fputcsv($csvfile,
-          array(1, // done
-              $xml->observation_time_rfc822, // date
-              $xml->location . ' Temperature', // name
-              $xml->location, // location
-              // "Temperature", // category
-              $xml->temp_c, // value
-              "Celsius", // unit
-          ), ',');
+      if (variable_get('farmosnws_log_temperature', 1) == 1) {
+        // temperature in C
+        fputcsv($csvfile, array(1, $xml->observation_time_rfc822, $xml->location . ' Temperature', $notes, $xml->temp_c, "Celsius"));
+      }
       
-      // log the barametric pressure
-      fputcsv($csvfile,
-          array(1, // done
-              $xml->observation_time_rfc822, // date
-              $xml->location . ' Barometric Pressure', // name
-              $notes, // notes
-              // "Pressure",
-              $xml->pressure_mb,
-              "Millibars",
-          ), ',');
-    }
+      if (variable_get('farmosnws_log_pressure', 1) == 1) {
+        // log the barametric pressure
+        fputcsv($csvfile, array(1, $xml->observation_time_rfc822, $xml->location . ' Barometric Pressure', $notes, $xml->pressure_mb, "Millibars"));
+      }
+
+      if (variable_get('farmosnws_log_windspeed', 1) == 1) {
+        // log wind speed in kph
+        $kph_speed = $xml->wind_mph * 1.60934;
+        fputcsv($csvfile, array(1, $xml->observation_time_rfc822, $xml->location . ' Wind Speed', $notes, $kph_speed, "KPH"));
+      }
+
+      if (variable_get('farmosnws_log_visibility', 1) == 1) {
+        // log the visibility in KM
+        $kms = $xml->visibility_mi * 1.60934;
+        fputcsv($csvfile, array(1, $xml->observation_time_rfc822, $xml->location . ' Visibility', $notes, $kms, "Kilometers"));
+      }
+    } // end if metric units
     
     // log the US, standard units
     if ( $measure_units == 'us' ) {
-      // temperature in F
-      fputcsv($csvfile,
-          array(1,
-              $xml->observation_time_rfc822,
-              $xml->location . ' Temperature', // name
-              $xml->location,
-              // "Temperature",
-              $xml->temp_f,
-              "Fahrenheit",
-          ), ',');
-      
-      // log the barametric pressure
-      fputcsv($csvfile,
-          array(1,
-              $xml->observation_time_rfc822,
-              $xml->location . ' Barometric Pressure', // name
-              $xml->location,
-              // "Pressure",
-              $xml->pressure_in,
-              "Inches",
-          ), ',');
-      
-      // log the wind speed
-      fputcsv($csvfile,
-          array("1",
-              $xml->observation_time_rfc822,
-              $xml->location . ' Wind Speed', // name
-              $xml->location,
-              // "Wind",
-              $xml->wind_mph,
-              "MPH",
-          ), ',');
-      
-      // log the visibility
-      fputcsv($csvfile,
-          array("1",
-              $xml->observation_time_rfc822,
-              $xml->location . ' Visibility', // name
-              $xml->location,
-              // "Visibility",
-              $xml->visibility_mi,
-              "Miles",
-          ), ',');
+      if (variable_get('farmosnws_log_temperature', 1) == 1) {
+        // temperature in F
+        fputcsv($csvfile, array(1, $xml->observation_time_rfc822, $xml->location . ' Temperature', $notes, $xml->temp_f, "Fahrenheit"));
+      }
+
+      if (variable_get('farmosnws_log_pressure', 1) == 1) {      
+        // log the barametric pressure
+        fputcsv($csvfile, array(1, $xml->observation_time_rfc822, $xml->location . ' Barometric Pressure', $notes, $xml->pressure_in, "Inches"));
+      }
+    
+      if (variable_get('farmosnws_log_windspeed', 1) == 1) { 
+        // log the wind speed
+        fputcsv($csvfile, array("1", $xml->observation_time_rfc822, $xml->location . ' Wind Speed', $notes, $xml->wind_mph, "MPH"));
+      }
+
+      if (variable_get('farmosnws_log_visibility', 1) == 1) {
+        // log the visibility
+        fputcsv($csvfile, array("1", $xml->observation_time_rfc822, $xml->location . ' Visibility', $notes, $xml->visibility_mi, "Miles"));
+      }
+    } // end if US units
+   
+    if (variable_get('farmosnws_log_humidity', 1) == 1) {
+      // log the relative humidity
+      fputcsv($csvfile, array("1", $xml->observation_time_rfc822, $xml->location . ' Humidity', $notes, $xml->relative_humidity, "Percent Humidity"));
     }
-    
-    // log the relative humidity
-    fputcsv($csvfile,
-        array("1",
-            $xml->observation_time_rfc822,
-            $xml->location . ' Humidity', // name
-            $xml->location,
-            // "Humidity",
-            $xml->relative_humidity,
-            "Percent Humidity",
-        ), ',');
-    
-    
-    // log the wind direction
-    fputcsv($csvfile,
-        array("1",
-            $xml->observation_time_rfc822,
-            $xml->location . ' Wind Direction', // name
-            $xml->location,
-            // "Wind",
-            $xml->wind_degrees,
-            "Direction",
-        ), ',');
-    
-    // log the weather string
-    fputcsv($csvfile,
-        array("1",
-            $xml->observation_time_rfc822,
-            $xml->location . ' Weather', // name
-            $xml->weather, // $xml->location . ' ' . $xml->observation_time_rfc822,
-            // "Weather",
-            "", // $xml->weather,
-            "",
-        ), ',');
+
+    if (variable_get('farmosnws_log_winddirection', 1) == 1) {    
+      // log the wind direction
+      fputcsv($csvfile, array("1", $xml->observation_time_rfc822, $xml->location . ' Wind Direction', $xml->wind_dir, $xml->wind_degrees, "Degrees"));
+    }
+   
+    if (variable_get('farmosnws_log_weather', 1) == 1) { 
+      // log the weather string
+      fputcsv($csvfile, array("1", $xml->observation_time_rfc822, $xml->location . ' Weather', $xml->weather, "", ""));
+    }
   
     // close the file
     fclose($csvfile);
     
     // remove feed file
-    if ( variable_get('farmosnws_del_process_feed', "no") == "yes" ) {
+    if ( variable_get('farmosnws_delete_xml', "no") == "yes" ) {
       $removefeed = unlink($feedfilename);
       if ($removefeed == FALSE) {
         throw new Exception("Unable to remove XML feed file " . $feedfilename);

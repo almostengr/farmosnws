@@ -11,7 +11,7 @@ function farmosnws_install() {
   $vocab_qty_units = taxonomy_vocabulary_machine_name_load('farm_quantity_units');
 
   // list of terms to add 
-  $terms_qty_list = array('Fahrenheit', 'Celsius', 'Percent Humdity', 'Direction', 'Inches', 'MPH', 'Miles', 'Knots', 'KM', 'Degrees');
+  $terms_qty_list = array('Fahrenheit', 'Celsius', 'Percent Humdity', 'Direction', 'Inches', 'MPH', 'Miles', 'Knots', 'KM', 'Degrees', 'KPH');
   
   // check if the term exists, if it does not then add it
   foreach($terms_qty_list as $term_qty_item) {
@@ -35,6 +35,13 @@ function farmosnws_install() {
   variable_set('farmosnws_delete_xml', 'yes');
   variable_set('farmosnws_cron_last', 0);
   variable_set('farmosnws_locations', 'KMGM');
+  variable_set('farmosnws_log_dewpoint', 1);
+  variable_set('farmosnws_log_pressures', 1);
+  variable_set('farmosnws_log_temperature', 1);
+  variable_set('farmosnws_log_visibility', 1);
+  variable_set('farmosnws_log_weather', 1);
+  variable_set('farmosnws_log_winddirection', 1);
+  variable_set('farmosnws_log_windspeed', 1);
 }
 
 /**
@@ -66,11 +73,47 @@ function farmosnws_uninstall() {
 } // end function
 
 /**
- * Use FarmOS temperature setting and limit the number of feed pulls from NWS.
+ * Use FarmOS temperature setting, limit the number of feed pulls from NWS, and update new and existing variables.
  *
  * Remove the temperature variable used by the module.
  */
 function farmosnws_update_7201() {
+  // list of terms to add
+  $terms_qty_list = array('KPH', 'Kilometers', 'Degrees');
+
+  // check if the term exists, if it does not then add it
+  foreach($terms_qty_list as $term_qty_item) {
+    $taxterm = taxonomy_get_term_by_name($term_qty_item);
+
+    if (count($taxterm) == 0) {
+      $tax_qty_term = new stdClass();
+      $tax_qty_term->name = $term_qty_item;
+      $tax_qty_term->vid = $vocab_qty_units->vid;
+      taxonomy_term_save($tax_qty_term);
+
+      watchdog('farmosnws', 'Created ' . $term_qty_item . ' taxonomy term.', array(), WATCHDOG_INFO, NULL);
+    }
+    else {
+      watchdog('farmosnws', 'Matched taxonomy term ' . $term_qty_item, array(), WATCHDOG_INFO, NULL);
+    }
+  }
+
+  // delete unused variables
   variable_del('farmosnws_temp_units');
+
+  // set new variables being used
   variable_set('farmosnws_cron_last', 0);
+  variable_set('farmosnws_log_dewpoint', 1);
+  variable_set('farmosnws_log_pressures', 1);
+  variable_set('farmosnws_log_temperature', 1);
+  variable_set('farmosnws_log_visibility', 1);
+  variable_set('farmosnws_log_weather', 1);
+  variable_set('farmosnws_log_winddirection', 1);
+  variable_set('farmosnws_log_windspeed', 1);
+
+  // fix variable that was saved with wrong name
+  $delete_feed_value = variable_get('farmosnws_del_process_feed', 'no');
+  variable_set('farmosnws_delete_xml', $delete_feed_value);
+  variable_del('farmosnws_del_process_feed');
 }
+
