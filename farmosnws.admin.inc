@@ -24,7 +24,7 @@ function farmosnws_admin_form() {
   $form['farmosnws_locations'] = array(
     '#type' => 'textfield',
     '#title' => t('Locations'),
-    '#description' => t('Enter the locations that you would like weather data pulled for. Each location must be entered must be separated by commas. Feeds can be found on the ' . l('NWS XML feeds page', 'http://w1.weather.gov/xml/current_obs/') . '.'),
+    '#description' => t('Enter the locations that you would like weather data pulled for. Each location must be entered must be separated by commas. Feeds can be found on the ' . l('NWS XML feeds page', 'http://w1.weather.gov/xml/current_obs/', array('attributes' => array('target' => '_blank'))) . '.'),
     '#required' => TRUE,
     '#default_value' => variable_get('farmosnws_locations', 'KMGM'),
   );
