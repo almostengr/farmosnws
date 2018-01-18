@@ -77,7 +77,7 @@ function farmosnws_uninstall() {
  *
  * Remove the temperature variable used by the module.
  */
-function farmosnws_update_7201() {
+function farmosnws_update_7201(&$sandbox) {
   // list of terms to add
   $terms_qty_list = array('KPH', 'Kilometers', 'Degrees');
 

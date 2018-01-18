@@ -165,10 +165,10 @@ function farmosnws_check_cron_time() {
 
 /**
  * 
- * Check that the units of measurement have been set in the FarmOS configuration. 
+ * Check that the units of measurement have been set in the FarmOS configuration.
  * If the value has not been set then display a warning.
  */
-function farmosnws_check_farmos_measurements() {  
+function farmosnws_check_farmos_measurements() {
   $units = variable_get('farm_quantity_unit_system', 0);
 
   if ($units == "0") {
@@ -235,12 +235,12 @@ function farmosnws_convert_xml_2_csv($feedfilename) {
         fputcsv($csvfile, array(1, $xml->observation_time_rfc822, $xml->location . ' Temperature', $notes, $xml->temp_f, "Fahrenheit"));
       }
 
-      if (variable_get('farmosnws_log_pressure', 1) == 1) {      
+      if (variable_get('farmosnws_log_pressure', 1) == 1) {
         // log the barametric pressure
         fputcsv($csvfile, array(1, $xml->observation_time_rfc822, $xml->location . ' Barometric Pressure', $notes, $xml->pressure_in, "Inches"));
       }
     
-      if (variable_get('farmosnws_log_windspeed', 1) == 1) { 
+      if (variable_get('farmosnws_log_windspeed', 1) == 1) {
         // log the wind speed
         fputcsv($csvfile, array("1", $xml->observation_time_rfc822, $xml->location . ' Wind Speed', $notes, $xml->wind_mph, "MPH"));
       }
@@ -256,12 +256,12 @@ function farmosnws_convert_xml_2_csv($feedfilename) {
       fputcsv($csvfile, array("1", $xml->observation_time_rfc822, $xml->location . ' Humidity', $notes, $xml->relative_humidity, "Percent Humidity"));
     }
 
-    if (variable_get('farmosnws_log_winddirection', 1) == 1) {    
+    if (variable_get('farmosnws_log_winddirection', 1) == 1) {
       // log the wind direction
       fputcsv($csvfile, array("1", $xml->observation_time_rfc822, $xml->location . ' Wind Direction', $xml->wind_dir, $xml->wind_degrees, "Degrees"));
     }
    
-    if (variable_get('farmosnws_log_weather', 1) == 1) { 
+    if (variable_get('farmosnws_log_weather', 1) == 1) {
       // log the weather string
       fputcsv($csvfile, array("1", $xml->observation_time_rfc822, $xml->location . ' Weather', $xml->weather, "", ""));
     }
@@ -281,3 +281,4 @@ function farmosnws_convert_xml_2_csv($feedfilename) {
     farmosnws_display_error($e->getMessage());
   }
 }
+

@@ -11,3 +11,4 @@ files[] = farmosnws.module
 files[] = farmosnws.admin.inc
 
 configure = admin/config/services/farmosnws
+

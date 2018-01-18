@@ -127,3 +127,4 @@ function farmosnws_admin_form_validate($form, &$form_state) {
     form_set_error('farmosnws_weather_feeds_dir', 'The weather feed directory cannot be created. Please verify that Drupal as write permissions and try again.');
   }
 } // end if
+
