@@ -77,6 +77,9 @@ function farmosnws_uninstall() {
  * NWS, and update new and existing variables.
  */
 function farmosnws_update_7201(&$sandbox) {
+  // get the vocabulary id
+  $vocab_qty_units = taxonomy_vocabulary_machine_name_load('farm_quantity_units');
+
   // list of terms to add
   $terms_qty_list = array('KPH', 'Kilometers', 'Degrees');
 
