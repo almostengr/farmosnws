@@ -27,9 +27,11 @@ function farmosnws_menu() {
   $items['admin/config/services/farmosnws/force'] = array(
     'title' => t('Force Feed Pull'),
     'desecription' => t('Bypass hourly feed pull and pull latest feed from NWS.'),
-    'page callback' => 'farmosnws_get_xml_force',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('farmosnws_admin_force_feed_form'),
     'access arguments' => array('access administration pages'),
     'type' => MENU_LOCAL_ACTION,
+    'file' => 'farmosnws.admin.inc',
   );
    
   return $items;
@@ -105,17 +107,6 @@ function farmosnws_display_error($errmessage) {
 function farmosnws_display_warning($warnmessage) {
   drupal_set_message(t($warnmessage), 'warning', FALSE);
   watchdog('farmosnws', t($warnmessage), array(), WATCHDOG_WARNING, NULL);
-}
-
-function farmosnws_get_xml_force() {
-  // pull the feed
-  farmosnws_get_xml();
-
-  // display message
-  drupal_set_message(t("Feed was forcefully pulled. Run cron to load feed."), 'status', FALSE);
-
-  // redirect back to the admin form
-  drupal_goto('admin/config/services/farmosnws');
 }
 
 /**

@@ -128,3 +128,45 @@ function farmosnws_admin_form_validate($form, &$form_state) {
   }
 } // end if
 
+/**
+ * Implements hook_form()
+ *
+ * The admin form for pulling the latest data feed. This will bypass the 
+ * cron restriction for pulling the latest data.
+ *
+ * @return Returns a built form object.
+ */
+function farmosnws_admin_force_feed_form() {
+  $form = array();
+
+  $form['markup'] = array(
+    '#markup' => t('<p>Force pulling data within the same hour can result in duplication of data. Are you sure you want to continue?</p>'),
+  );
+
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Pull Feed'),
+  );
+
+  $form['cancel'] = array(
+    '#markup' => l(t('Cancel'), 'admin/config/services/farmosnws'),
+  );
+
+  return $form;
+}
+
+/**
+ * Runs the feed pull when the form is submitted. Form does not have any fields, 
+ * so there isn't any data to save to the database.
+ *
+ * @param array $form A form object.
+ * @param array $form_state Form data that was submitted.
+ */
+function farmosnws_admin_force_feed_form_submit($form, &$form_state) {
+  // pull the feed
+  farmosnws_get_xml();
+
+  // display message
+  drupal_set_message(t("Feed was forcefully pulled. Run cron to load feed."), 'status', FALSE);
+}
+
