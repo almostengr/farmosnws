@@ -61,7 +61,6 @@ function farmosnws_create_feed_dir($feedpath) {
     
     // verify directory exists
     if ( $feedpath == FALSE ) {
-      // watchdog('farmosnws', 'Unable to create the weather feed directory.', array(), WATCHDOG_ERROR, NULL);
       farmosnws_display_error("Unable to create weather feed directory");
     }
     else {
@@ -76,7 +75,9 @@ function farmosnws_create_feed_dir($feedpath) {
   return $mkdirsuccess;
 }
 
-/**
+/*a
+ * Displays an error message on the page and in the log.
+ *
  * @param string $errmessage The error message to be displayed on the screen 
  *   and written to the log/watchdog.
  */
@@ -86,6 +87,8 @@ function farmosnws_display_error($errmessage) {
 }
 
 /**
+ * Displays a warning message on the page and in the log.
+ *
  * @param string $warnmessage The warning message to be displayed on the 
  * screen and written to the log/watchdog.
  */
@@ -122,8 +125,6 @@ function farmosnws_get_xml() {
     
     // if error occurs when performing the request
     if ( $response->error ) {
-      // watchdog('farmosnws', 'Response code: ' . $response->code . '. ' . $response->error, array(), WATCHDOG_ERROR, NULL);
-      // drupal_set_message($response->error, 'error', FALSE);
       farmosnws_display_error($response->error);
     }
     else {
@@ -144,8 +145,7 @@ function farmosnws_get_xml() {
         variable_set("farmosnws_cron_last", REQUEST_TIME);
       }
       else {
-        drupal_set_message("Feed could not be downloaded because the directory does not exist. Please verify that Drupal has write access and try again.", 'error', FALSE);
-        watchdog('farmosnws', 'Feed could not be downloaded because the directory does not exist.', array(), WATCHDOG_ERROR, NULL);
+        farmosnws_display_error("Feed could not be downloaded because the directory does not exist. Please verify that Drupal has write access and try again.");
       }
     } // end else
   } // end foreach
@@ -159,7 +159,7 @@ function farmosnws_check_cron_time() {
   $crontime = variable_get('cron_safe_threshold', 0);
 
   if ($crontime != "3600") {
-    drupal_set_message(t("Cron is not set to 1 hour. It is recommended that cron runs hourly to load new NWS data feeds as they are published."), 'warning', FALSE);
+    farmosnws_display_warning("Cron is not set to 1 hour. It is recommended that cron runs hourly to load new nWS data feeds as they are published.");
   }
 }
 
@@ -172,7 +172,7 @@ function farmosnws_check_farmos_measurements() {
   $units = variable_get('farm_quantity_unit_system', 0);
 
   if ($units == "0") {
-    drupal_set_message(t("Units of measurement is not set. Set this value in the " . l(t("Farm OS configuration."), "admin/config/farm/quantity")), 'warning', FALSE);
+    farmosnws_display_warning("Units of measurement is not set. Set this value in the " . l("Farm OS configuration.", "admin/config/farm/quantity"));
   }
 }
 
@@ -319,8 +319,6 @@ function farmosnws_convert_xml_2_csv($feedfilename) {
     }
   }
   catch(Exception $e) {
-    farmosnws_display_error($e-getMessage());
-    // watchdog('farmosnws', $e->getMessage(), array(), WATCHDOG_ERROR, NULL);
-    // drupal_set_message($e->getMessage(), 'error');
+    farmosnws_display_error($e->getMessage());
   }
 }
