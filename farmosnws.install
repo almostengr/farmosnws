@@ -142,6 +142,9 @@ function farmosnws_update_7202() {
   // set the UID to save data in case user name or other details are changed
   variable_set('farmosnws_data_uid', $account->uid);
 
+  // save data loaded as the user that has been created
+  variable_set('farmosnws_save_as_user', 'yes');
+
 } // end farmosnws_update_7202
 
 
