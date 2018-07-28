@@ -120,3 +120,17 @@ function farmosnws_update_7201(&$sandbox) {
   variable_del('farmosnws_del_process_feed');
 }
 
+
+function farmosnws_update_7202() {
+  // create user for nwsdata if it doesn't already exist
+  $user_data = array(
+    'name' => 'farmosnwsdata',
+    'mail' => 'farmosnwsdata@localhost.com',
+    'pass' => user_password(20),
+    'status' => 0,
+    'init' => 'farmosnwsdata@localhost.com',
+    'roles' => array(
+      DRUPAL_AUTHENTICATED_RID = 'authenticated user',
+    ),
+  );
+}
