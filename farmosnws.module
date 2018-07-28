@@ -165,7 +165,7 @@ function farmosnws_get_xml() {
     else {
       // if no errors occur when performing the request
       // watchdog('farmosnws', 'Response code: ' . $response->code, array(), WATCHDOG_INFO, NULL);
-      farmosnws_display_success("Response code: " . $response->code, FALSE);
+      farmosnws_display_status("Response code: " . $response->code, FALSE);
 
       // if the directory doesnt exist, then create it with 755 permissions
       $direxist = farmosnws_create_feed_dir($weatherfeedsdir);
@@ -174,7 +174,7 @@ function farmosnws_get_xml() {
         // save the contents retrieved
         file_put_contents($weather_feed_name, $response->data);
         // watchdog('farmosnws', 'Weather data saved to ' . $weather_feed_name, array(), WATCHDOG_INFO, NULL);
-        farmosnws_display_success("Weather data saved to " . $weather_feed_name, FALSE);
+        farmosnws_display_status("Weather data saved to " . $weather_feed_name, FALSE);
         
         farmosnws_convert_xml_2_csv($weather_feed_name);
         

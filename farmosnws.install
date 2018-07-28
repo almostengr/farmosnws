@@ -139,7 +139,7 @@ function farmosnws_update_7202() {
     'status' => 0,
     'init' => 'farmosnwsdata@localhost.com',
     'roles' => array(
-      DRUPAL_AUTHENTICATED_RID = 'authenticated user',
+      DRUPAL_AUTHENTICATED_RID => 'authenticated user',
     ),
   );
   }
