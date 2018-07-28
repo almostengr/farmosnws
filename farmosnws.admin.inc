@@ -45,8 +45,8 @@ function farmosnws_admin_form() {
     '#title' => t('Save Data as FarmOS NWS'),
     '#required' => TRUE,
     '#options' => array(
-      'yes' => 'Yes',
-      'no' => 'No',
+      variable_get('farmosnws_data_uid', 0) => 'Yes',
+      0 => 'No',
     ),
     '#description' => t('Save the data loaded as the FarmOS NWS user. This will help distigush between data that is manully entered and automatically entered.'),
     '#default_value' => variable_get('farmosnws_save_as_user', 'yes'),
