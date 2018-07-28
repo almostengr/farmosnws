@@ -29,7 +29,7 @@ function farmosnws_install() {
     }
     else {
       // watchdog('farmosnws', 'Matched taxonomy term ' . $term_qty_item, array(), WATCHDOG_INFO, NULL);
-      farmosnws_display_status("Matched taxonomy term ' . $term_qty_item, FALSE);
+      farmosnws_display_status("Matched taxonomy term " . $term_qty_item, FALSE);
     }
   }
 
