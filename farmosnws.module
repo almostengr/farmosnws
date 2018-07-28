@@ -89,9 +89,13 @@ function farmosnws_create_feed_dir($feedpath) {
  *
  * @param string $errmessage The error message to be displayed on the screen 
  *   and written to the log/watchdog.
+ * @param boolean $display Whether or not to display the message to the 
+ * user or only log it.
  */
-function farmosnws_display_error($errmessage) {
-  drupal_set_message(t($errmessage), 'error', FALSE);
+function farmosnws_display_error($errmessage, $display=FALSE) {
+  if ($display == TRUE) {
+    drupal_set_message(t($errmessage), 'error', FALSE);
+  }
   watchdog('farmosnws', t($errmessage), array(), WATCHDOG_ERROR, NULL);
 }
 
@@ -100,28 +104,31 @@ function farmosnws_display_error($errmessage) {
  *
  * @param string $warnmessage The warning message to be displayed on the 
  * screen and written to the log/watchdog.
+ * @param boolean $display Whether or not to display the message to the 
+ * user or only log it.
  */
-function farmosnws_display_warning($warnmessage) {
-  drupal_set_message(t($warnmessage), 'warning', FALSE);
+function farmosnws_display_warning($warnmessage, $display=FALSE) {
+  if ($display == TRUE) {
+    drupal_set_message(t($warnmessage), 'warning', FALSE);
+  }
   watchdog('farmosnws', t($warnmessage), array(), WATCHDOG_WARNING, NULL);
 }
 
-function farmosnws_display_status($statusmessage) {
-  drupal_set_message(t($statusmessage), 'warning', FALSE);
+/**
+ * Displays a status message on the page and in the log.
+ * 
+ * @param string $statusmessage The status message to be displayed on the
+ * screen and written to the log/watchdog.
+ * @param boolean $display Whether or not to display the message to the user
+ * or only log it.
+ */
+function farmosnws_display_status($statusmessage, $display=FALSE) {
+  if ($display == TRUE) {
+    drupal_set_message(t($statusmessage), 'warning', FALSE);
+  }
   watchdog('farmosnws', t($statusmessage), array(), WATCHDOG_INFO, NULL);
 }
 
-function farmosnws_log_error($errmessage) {
-  watchdog('farmosnws', t($errmessage), array(), WATCHDOG_ERROR, NULL);
-}
-
-function farmosnws_log_warning($warnmessage) {
-  watchdog('farmosnws', t($warnmessage), array(), WATCHDOG_WARNING, NULL);
-}
-
-function farmosnws_log_status($statusmessage) {
-  watchdog('farmosnws', t($statusmessage), array(), WATCHDOG_INFO, NULL);
-}
 
 /**
  * Get the weather data from the NWS
