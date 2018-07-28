@@ -39,6 +39,18 @@ function farmosnws_admin_form() {
     '#description' => t('Delete the National Weather Service XML feed after it has been processed.'),
     '#default_value' => variable_get('farmosnws_delete_xml', 'yes'),
   );
+
+  $form['farmosnws_save_as_user'] = array(
+    '#type' => 'select',
+    '#title' => t('Save Data as FarmOS NWS'),
+    '#required' => TRUE,
+    '#options' => array(
+      variable_get('farmosnws_data_uid', 0) => 'Yes',
+      0 => 'No',
+    ),
+    '#description' => t('Save the data loaded as the FarmOS NWS user. This will help distigush between data that is manully entered and automatically entered.'),
+    '#default_value' => variable_get('farmosnws_save_as_user', 'yes'),
+  );
   
   $form['farmosnws_feed_threshold'] = array(
     '#type' => 'select',
@@ -147,7 +159,7 @@ function farmosnws_admin_force_feed_form() {
   );
 
   $form['cancel'] = array(
-    '#markup' => l(t('Cancel'), 'admin/config/services/farmosnws'),
+    '#markup' => l(t('Cancel'), 'admin/config/farm/farmosnws'),
   );
 
   return $form;
@@ -165,7 +177,6 @@ function farmosnws_admin_force_feed_form_submit($form, &$form_state) {
   farmosnws_get_xml();
 
   // display message
-  // drupal_set_message(t("Feed was forcefully pulled. Run cron to load feed."), 'status', FALSE);
   farmosnws_display_status("Feed was forcefully pulled. Run cron to load feed.", TRUE);
 }
 

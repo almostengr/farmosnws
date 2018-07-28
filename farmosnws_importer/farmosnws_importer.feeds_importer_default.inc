@@ -39,7 +39,7 @@ function farmosnws_importer_feeds_importer_default() {
     'processor' => array(
       'plugin_key' => 'LogProcessor',
       'config' => array(
-        'author' => '0',
+        'author' => variable_get('farmosnws_data_uid', 0),
         'authorize' => 0,
         'mappings' => array(
           0 => array(

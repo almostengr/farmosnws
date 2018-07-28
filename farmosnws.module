@@ -48,7 +48,6 @@ function farmosnws_cron() {
     farmosnws_get_xml();
   }
   else {
-    // watchdog('farmosnws', 'Cron ran. Skipping feed pull.', array(), WATCHDOG_INFO, NULL);
     farmosnws_display_status("Cron ran. Skipping feed pull.", FALSE);
   }
 }
@@ -74,7 +73,6 @@ function farmosnws_create_feed_dir($feedpath) {
       $mkdirsuccess = FALSE;
     }
     else {
-      // watchdog('farmosnws', 'Created weather feed directory.', array(), WATCHDOG_INFO, NULL);
       farmosnws_display_status("Created weather feed directory.", FALSE);
     } // end if
   }
@@ -153,7 +151,6 @@ function farmosnws_get_xml() {
  
     watchdog('farmosnws', $url, array(), WATCHDOG_DEBUG, NULL);
     farmosnws_display_status("Getting weather data for " . $loc, FALSE);
-    // watchdog('farmosnws', 'Getting weather data for ' . $loc, array(), WATCHDOG_INFO, NULL);
   
     // pull the data   
     $response = drupal_http_request($url, array());
@@ -164,8 +161,7 @@ function farmosnws_get_xml() {
     }
     else {
       // if no errors occur when performing the request
-      // watchdog('farmosnws', 'Response code: ' . $response->code, array(), WATCHDOG_INFO, NULL);
-      farmosnws_display_success("Response code: " . $response->code, FALSE);
+      farmosnws_display_status("Response code: " . $response->code, FALSE);
 
       // if the directory doesnt exist, then create it with 755 permissions
       $direxist = farmosnws_create_feed_dir($weatherfeedsdir);
@@ -173,8 +169,7 @@ function farmosnws_get_xml() {
       if ($direxist == TRUE) {
         // save the contents retrieved
         file_put_contents($weather_feed_name, $response->data);
-        // watchdog('farmosnws', 'Weather data saved to ' . $weather_feed_name, array(), WATCHDOG_INFO, NULL);
-        farmosnws_display_success("Weather data saved to " . $weather_feed_name, FALSE);
+        farmosnws_display_status("Weather data saved to " . $weather_feed_name, FALSE);
         
         farmosnws_convert_xml_2_csv($weather_feed_name);
         
@@ -195,7 +190,7 @@ function farmosnws_check_cron_time() {
   $crontime = variable_get('cron_safe_threshold', 0);
 
   if ($crontime != "3600") {
-    farmosnws_display_warning("Cron is not set to 1 hour. It is recommended that cron runs hourly to load new nWS data feeds as they are published.", TRUE);
+    farmosnws_display_warning("Cron is not set to 1 hour. It is recommended that cron runs hourly to load new NWS data feeds as they are published.", TRUE);
   }
 }
 

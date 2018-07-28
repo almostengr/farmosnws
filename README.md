@@ -14,6 +14,7 @@ reducing the amount of infrastructure required to maintain the farm or garden.
 ## System Requirements
 * Drupal 7
 * FarmOS
+* Internet connection
 
 ## Installation
 
@@ -59,6 +60,19 @@ git checkout 7.x-2.x
 git pull origin 7.x-2.x
 ```
  
+### Development Version
+To get the latest development version of the code, pull the latest dev release from
+the [https://github.com/bitsecondal/farmosnws/tree/7.x-2.x-dev](//github.com/bitsecondal/farmosnws/tree/7.x-2.x-dev).
+Development versions of the code may not be stable and are not recommended to be
+used in Production environments.
+
+Alternatively, you can get the latest development code by going to the directory 
+that contains the code and running the commands below:
+```shell
+git checkout 7.x-2.x-dev
+git pull origin 7.x-2.x-dev
+```
+
 ## Author
 Kenny Robinson, [@almostengr](https://twitter.com/almostengr)
 
