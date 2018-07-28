@@ -39,6 +39,18 @@ function farmosnws_admin_form() {
     '#description' => t('Delete the National Weather Service XML feed after it has been processed.'),
     '#default_value' => variable_get('farmosnws_delete_xml', 'yes'),
   );
+
+  $form['farmosnws_save_as_user'] = array(
+    '#type' => 'select',
+    '#title' => t('Save Data as FarmOS NWS'),
+    '#required' => TRUE,
+    '#options' => array(
+      'yes' => 'Yes',
+      'no' => 'No',
+    ),
+    '#description' => t('Save the data loaded as the FarmOS NWS user. This will help distigush between data that is manully entered and automatically entered.'),
+    '#default_value' => variable_get('farmosnws_save_as_user', 'yes'),
+  );
   
   $form['farmosnws_feed_threshold'] = array(
     '#type' => 'select',
