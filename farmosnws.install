@@ -122,7 +122,12 @@ function farmosnws_update_7201(&$sandbox) {
 
 
 function farmosnws_update_7202() {
-  // create user for nwsdata if it doesn't already exist
+  // check to see if the account already exists. If it doesnt then create it.
+
+  $account_name = 'farmosnwsdata';
+  $account = user_load_by_name($account_name);
+
+  if ($account === FALSE) {
   $user_data = array(
     'name' => 'farmosnwsdata',
     'mail' => 'farmosnwsdata@localhost.com',
@@ -133,4 +138,10 @@ function farmosnws_update_7202() {
       DRUPAL_AUTHENTICATED_RID = 'authenticated user',
     ),
   );
-}
+  }
+  else{
+    farmosnws_display_status("User account exists. No action taken.", FALSE);
+  }
+} // end farmosnws_update_7202
+
+
