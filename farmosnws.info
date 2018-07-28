@@ -1,8 +1,8 @@
 name = FarmOS NWS
-description = Imports data from the National Weather Service into Drupal for use by FarmOS.
+description = Imports data from the National Weather Service into Drupal for use by FarmOS. Created by Almost Engineer. More information can be found on the <a href="https://github.com/bitsecondal/farmosnws">GitHub project page</a>.
 core = 7.x
 package = farmOS
-version = 7.x-2.0
+version = 7.x-2.2
 dependencies[] = farm
 dependencies[] = farm_quantity
 dependencies[] = farm_log_observation
@@ -11,3 +11,4 @@ files[] = farmosnws.module
 files[] = farmosnws.admin.inc
 
 configure = admin/config/services/farmosnws
+
