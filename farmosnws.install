@@ -52,7 +52,7 @@ function farmosnws_install() {
  */
 function farmosnws_enable() {
   // notice to visit configuration page to set initial values for variables
-  farmosnws_display_warning("Visit the module " . l(t("configuration page"), 'admin/config/services/farmosnws') . " to complete module setup.", TRUE);
+  farmosnws_display_warning("Visit the module " . l(t("configuration page"), 'admin/config/farm/farmosnws') . " to complete module setup.", TRUE);
   
   farmosnws_check_farmos_measurements();
   farmosnws_check_cron_time();
