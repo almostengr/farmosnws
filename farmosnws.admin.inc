@@ -147,7 +147,7 @@ function farmosnws_admin_force_feed_form() {
   );
 
   $form['cancel'] = array(
-    '#markup' => l(t('Cancel'), 'admin/config/services/farmosnws'),
+    '#markup' => l(t('Cancel'), 'admin/config/farm/farmosnws'),
   );
 
   return $form;
