@@ -41,3 +41,8 @@ xmlrpc.php
 
 # ignore mkdocs files
 site/*
+
+# ignore vi (vim) files
+*swp
+*swo
+
