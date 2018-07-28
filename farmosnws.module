@@ -195,7 +195,7 @@ function farmosnws_check_cron_time() {
   $crontime = variable_get('cron_safe_threshold', 0);
 
   if ($crontime != "3600") {
-    farmosnws_display_warning("Cron is not set to 1 hour. It is recommended that cron runs hourly to load new nWS data feeds as they are published.", TRUE);
+    farmosnws_display_warning("Cron is not set to 1 hour. It is recommended that cron runs hourly to load new NWS data feeds as they are published.", TRUE);
   }
 }
 
