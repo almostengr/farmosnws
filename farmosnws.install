@@ -121,13 +121,9 @@ function farmosnws_update_7201(&$sandbox) {
 
 
 function farmosnws_update_7202() {
-  // check to see if the account already exists. If it doesnt then create it.
+  // Create a user account for loading data
 
-  $account_name = 'farmosnwsdata';
-  $account = user_load_by_name($account_name);
-
-  if ($account === FALSE) {
-  $user_data = array(
+  $account = array(
     'name' => 'farmosnwsdata',
     'mail' => 'farmosnwsdata@localhost.com',
     'pass' => user_password(20),
@@ -136,11 +132,16 @@ function farmosnws_update_7202() {
     'roles' => array(
       DRUPAL_AUTHENTICATED_RID => 'authenticated user',
     ),
+    'access' => REQUEST_TIME,
+    'is_new' => TRUE
   );
-  }
-  else{
-    farmosnws_display_status("User account exists. No action taken.", FALSE);
-  }
+  
+  // save the account
+  $account = user_save(null, $account);
+
+  // set the UID to save data in case user name or other details are changed
+  variable_set('farmosnws_data_uid', $account->uid);
+
 } // end farmosnws_update_7202
 
 
