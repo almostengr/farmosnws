@@ -24,10 +24,12 @@ function farmosnws_install() {
       $tax_qty_term->vid = $vocab_qty_units->vid;
       taxonomy_term_save($tax_qty_term);
       
-      watchdog('farmosnws', 'Created ' . $term_qty_item . ' taxonomy term.', array(), WATCHDOG_INFO, NULL);
+      // watchdog('farmosnws', 'Created ' . $term_qty_item . ' taxonomy term.', array(), WATCHDOG_INFO, NULL);
+      farmosnws_display_status("Created " . $term_qty_item . " taxonomy term.", FALSE);
     }
     else {
-      watchdog('farmosnws', 'Matched taxonomy term ' . $term_qty_item, array(), WATCHDOG_INFO, NULL);
+      // watchdog('farmosnws', 'Matched taxonomy term ' . $term_qty_item, array(), WATCHDOG_INFO, NULL);
+      farmosnws_display_status("Matched taxonomy term ' . $term_qty_item, FALSE);
     }
   }
 
@@ -50,7 +52,7 @@ function farmosnws_install() {
  */
 function farmosnws_enable() {
   // notice to visit configuration page to set initial values for variables
-  farmosnws_display_warning("Visit the module " . l(t("configuration page"), 'admin/config/services/farmosnws') . " to complete module setup.");
+  farmosnws_display_warning("Visit the module " . l(t("configuration page"), 'admin/config/services/farmosnws') . " to complete module setup.", TRUE);
   
   farmosnws_check_farmos_measurements();
   farmosnws_check_cron_time();
@@ -70,7 +72,7 @@ function farmosnws_uninstall() {
   
   menu_rebuild();
 
-  watchdog('farmosnws', 'FarmOS NWS module has been uninstalled', array(), WATCHDOG_INFO, NULL);
+  farmosnws_display_status("FarmOS NWS Module has been uninstalled", FALSE);
 } // end function
 
 /**
@@ -94,10 +96,12 @@ function farmosnws_update_7201(&$sandbox) {
       $tax_qty_term->vid = $vocab_qty_units->vid;
       taxonomy_term_save($tax_qty_term);
 
-      watchdog('farmosnws', 'Created ' . $term_qty_item . ' taxonomy term.', array(), WATCHDOG_INFO, NULL);
+      // watchdog('farmosnws', 'Created ' . $term_qty_item . ' taxonomy term.', array(), WATCHDOG_INFO, NULL);
+      farmosnws_display_status("Created " . $term_qty_item . " taxonomy term.", FALSE);
     }
     else {
-      watchdog('farmosnws', 'Matched taxonomy term ' . $term_qty_item, array(), WATCHDOG_INFO, NULL);
+      // watchdog('farmosnws', 'Matched taxonomy term ' . $term_qty_item, array(), WATCHDOG_INFO, NULL);
+      farmosnws_display_status("Matched taxonomy term " . $term_qty_item, FALSE);
     }
   }
 

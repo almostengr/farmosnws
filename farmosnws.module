@@ -48,7 +48,8 @@ function farmosnws_cron() {
     farmosnws_get_xml();
   }
   else {
-    watchdog('farmosnws', 'Cron ran. Skipping feed pull.', array(), WATCHDOG_INFO, NULL);
+    // watchdog('farmosnws', 'Cron ran. Skipping feed pull.', array(), WATCHDOG_INFO, NULL);
+    farmosnws_display_status("Cron ran. Skipping feed pull.", FALSE);
   }
 }
 
@@ -69,11 +70,12 @@ function farmosnws_create_feed_dir($feedpath) {
     
     // verify directory exists
     if ($feedpath == FALSE) {
-      farmosnws_display_error("Unable to create weather feed directory");
+      farmosnws_display_error("Unable to create weather feed directory", TRUE);
       $mkdirsuccess = FALSE;
     }
     else {
-      watchdog('farmosnws', 'Created weather feed directory.', array(), WATCHDOG_INFO, NULL);
+      // watchdog('farmosnws', 'Created weather feed directory.', array(), WATCHDOG_INFO, NULL);
+      farmosnws_display_status("Created weather feed directory.", FALSE);
     } // end if
   }
   else {
@@ -150,18 +152,20 @@ function farmosnws_get_xml() {
     $url = "http://w1.weather.gov/xml/current_obs/" . $loc . ".xml";
  
     watchdog('farmosnws', $url, array(), WATCHDOG_DEBUG, NULL);
-    watchdog('farmosnws', 'Getting weather data for ' . $loc, array(), WATCHDOG_INFO, NULL);
+    farmosnws_display_status("Getting weather data for " . $loc, FALSE);
+    // watchdog('farmosnws', 'Getting weather data for ' . $loc, array(), WATCHDOG_INFO, NULL);
   
     // pull the data   
     $response = drupal_http_request($url, array());
     
     // if error occurs when performing the request
     if (isset($response->error)) {
-      farmosnws_display_error($response->error);
+      farmosnws_display_error($response->error, TRUE);
     }
     else {
       // if no errors occur when performing the request
-      watchdog('farmosnws', 'Response code: ' . $response->code, array(), WATCHDOG_INFO, NULL);
+      // watchdog('farmosnws', 'Response code: ' . $response->code, array(), WATCHDOG_INFO, NULL);
+      farmosnws_display_success("Response code: " . $response->code, FALSE);
 
       // if the directory doesnt exist, then create it with 755 permissions
       $direxist = farmosnws_create_feed_dir($weatherfeedsdir);
@@ -169,7 +173,8 @@ function farmosnws_get_xml() {
       if ($direxist == TRUE) {
         // save the contents retrieved
         file_put_contents($weather_feed_name, $response->data);
-        watchdog('farmosnws', 'Weather data saved to ' . $weather_feed_name, array(), WATCHDOG_INFO, NULL);
+        // watchdog('farmosnws', 'Weather data saved to ' . $weather_feed_name, array(), WATCHDOG_INFO, NULL);
+        farmosnws_display_success("Weather data saved to " . $weather_feed_name, FALSE);
         
         farmosnws_convert_xml_2_csv($weather_feed_name);
         
@@ -177,7 +182,7 @@ function farmosnws_get_xml() {
         variable_set("farmosnws_cron_last", REQUEST_TIME);
       }
       else {
-        farmosnws_display_error("Feed could not be downloaded because the directory does not exist. Please verify that Drupal has write access and try again.");
+        farmosnws_display_error("Feed could not be downloaded because the directory does not exist. Please verify that Drupal has write access and try again.", TRUE);
       }
     } // end else
   } // end foreach
@@ -190,7 +195,7 @@ function farmosnws_check_cron_time() {
   $crontime = variable_get('cron_safe_threshold', 0);
 
   if ($crontime != "3600") {
-    farmosnws_display_warning("Cron is not set to 1 hour. It is recommended that cron runs hourly to load new nWS data feeds as they are published.");
+    farmosnws_display_warning("Cron is not set to 1 hour. It is recommended that cron runs hourly to load new nWS data feeds as they are published.", TRUE);
   }
 }
 
@@ -202,7 +207,7 @@ function farmosnws_check_farmos_measurements() {
   $units = variable_get('farm_quantity_unit_system', 0);
 
   if ($units == "0") {
-    farmosnws_display_warning("Units of measurement is not set. Set this value in the " . l("Farm OS configuration.", "admin/config/farm/quantity"));
+    farmosnws_display_warning("Units of measurement is not set. Set this value in the " . l("Farm OS configuration.", "admin/config/farm/quantity"), TRUE);
   }
 }
 
@@ -312,7 +317,8 @@ function farmosnws_convert_xml_2_csv($feedfilename) {
   }
   catch(Exception $e) {
     // handle the exception
-    farmosnws_display_error($e->getMessage());
+    farmosnws_display_error($e->getMessage(), TRUE);
   }
 }
+
 

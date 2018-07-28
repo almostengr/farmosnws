@@ -165,6 +165,7 @@ function farmosnws_admin_force_feed_form_submit($form, &$form_state) {
   farmosnws_get_xml();
 
   // display message
-  drupal_set_message(t("Feed was forcefully pulled. Run cron to load feed."), 'status', FALSE);
+  // drupal_set_message(t("Feed was forcefully pulled. Run cron to load feed."), 'status', FALSE);
+  farmosnws_display_status("Feed was forcefully pulled. Run cron to load feed.", TRUE);
 }
 
