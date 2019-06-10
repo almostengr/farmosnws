@@ -21,7 +21,7 @@ reducing the amount of infrastructure required to maintain the farm or garden.
 ### Clone the Repository
 To get the latest release, clone this repository by running the command below
 ```shell
-git clone https://github.com/bitsecondal/farmosnws.git
+git clone https://github.com/almostengr/farmosnws.git
 ```
 
 Within your Drupal site, enable the FarmOS NWS and FarmOS NWS Feeds Importer 
@@ -51,7 +51,7 @@ to manually remove each entry.
 
 ## Code Updates 
 To get the latest version of this code, pull the latest release from the 
-[FarmOS NWS GitHub Page](https://github.com/bitsecondal/farmosnws). 
+[FarmOS NWS GitHub Page](https://github.com/almostengr/farmosnws). 
 
 Alternatively you can get the latest code by going to the directory that contains 
 the code and running the commands below:
@@ -62,7 +62,7 @@ git pull origin 7.x-2.x
  
 ### Development Version
 To get the latest development version of the code, pull the latest dev release from
-the [https://github.com/bitsecondal/farmosnws/tree/7.x-2.x-dev](//github.com/bitsecondal/farmosnws/tree/7.x-2.x-dev).
+the [https://github.com/almostengr/farmosnws/tree/7.x-2.x-dev](//github.com/almostengr/farmosnws/tree/7.x-2.x-dev).
 Development versions of the code may not be stable and are not recommended to be
 used in Production environments.
 
@@ -75,10 +75,11 @@ git pull origin 7.x-2.x-dev
 
 ## Author
 Kenny Robinson, [@almostengr](https://twitter.com/almostengr)
+[http://thealmostengineer.com](http://thealmostengineer.com)
 
 ## Additional Information
 Bugs and enhancements will be tracked using the Issue tracker
-on the [project repo](https://github.com/bitsecondal/farmosnws/issues). 
+on the [project repo](https://github.com/almostengr/farmosnws/issues). 
 
 Project is available under the MIT License. See LICENSE for more information.
 
